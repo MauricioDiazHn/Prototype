@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototipo Funcional - Salón de Belleza</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilo para el scrollbar para un look más moderno */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        
+        /* Clases para la transición de los modales */
+        .modal-hidden { opacity: 0; visibility: hidden; transform: scale(0.95); }
+        .modal-visible { opacity: 1; visibility: visible; transform: scale(1); }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+    <div class="flex h-screen">
+        <!-- Barra de Navegación Lateral -->
+        <nav class="w-20 bg-slate-900/50 border-r border-white/10 p-4 flex flex-col items-center justify-between flex-shrink-0">
+            <div>
+                <!-- Logo -->
+                <div class="bg-pink-500 w-12 h-12 rounded-full flex items-center justify-center mb-10">
+                    <span class="text-2xl font-bold">S</span>
+                </div>
+                <!-- Iconos de Navegación -->
+                <ul id="main-nav" class="space-y-6">
+                    <li><a href="#dashboard" class="nav-link block p-3 bg-pink-500/20 rounded-lg" title="Panel de Control"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg></a></li>
+                    <li><a href="#daily-log" class="nav-link block p-3 hover:bg-white/10 rounded-lg" title="Registro Diario"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></a></li>
+                    <li><a href="#finances" class="nav-link block p-3 hover:bg-white/10 rounded-lg" title="Finanzas"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg></a></li>
+                    <li><a href="#reports" class="nav-link block p-3 hover:bg-white/10 rounded-lg" title="Reportes"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></a></li>
+                </ul>
+            </div>
+            <div><a href="#settings" class="nav-link block p-3 hover:bg-white/10 rounded-lg" title="Configuración"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg></a></div>
+        </nav>
+
+        <div class="flex-1 overflow-y-auto">
+            <!-- SECCIÓN: PANEL DE CONTROL (DASHBOARD) -->
+            <main id="dashboard" class="page-content p-6 lg:p-8" style="background-image: radial-gradient(circle at top right, rgb(244, 63, 94), rgb(17, 24, 39) 50%);">
+                <header class="mb-8"><h1 class="text-3xl font-bold">Panel de Control</h1><p class="text-white/60">Bienvenida de nuevo, aquí está el resumen de tu negocio.</p></header>
+                <div class="grid grid-cols-1 lg:grid-cols-4 grid-rows-1 lg:grid-rows-2 gap-6">
+                    <div class="lg:col-span-2 lg:row-span-2 rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10 flex flex-col"><h3 class="text-xl font-bold mb-4">Rendimiento del Mes</h3><div class="flex-grow flex items-center justify-center"><div class="text-center"><p class="text-white/50">[ El gráfico interactivo de Ingresos vs Egresos aparecerá aquí ]</p></div></div></div>
+                    <div class="rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10"><h4 class="text-sm font-semibold text-white/70">Ingresos de Hoy</h4><p class="text-4xl font-bold mt-2">L 2,800</p></div>
+                    <div class="rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10"><h4 class="text-sm font-semibold text-white/70">Gastos de Hoy</h4><p class="text-4xl font-bold mt-2">L 450</p></div>
+                    <div class="lg:col-span-2 rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10"><h3 class="text-xl font-bold mb-4">Registro Rápido de Servicio</h3><div class="space-y-4"><select class="w-full bg-slate-800/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"><option>Seleccionar servicio...</option><option>Manicura Clásica</option><option>Uñas Acrílicas</option><option>Corte de Cabello</option><option>Tinte Completo</option></select><select class="w-full bg-slate-800/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"><option>Seleccionar empleada...</option><option>Ana</option><option>Maria</option><option>Sofia</option></select><input type="number" placeholder="Precio (L)" class="w-full bg-slate-800/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"><button class="w-full bg-pink-500 hover:bg-pink-600 transition-colors rounded-lg px-4 py-3 font-bold">Registrar Venta</button></div></div>
+                </div>
+            </main>
+
+            <!-- SECCIÓN: REGISTRO DIARIO -->
+            <main id="daily-log" class="page-content p-6 lg:p-8 hidden" style="background-image: radial-gradient(circle at top right, rgb(244, 63, 94), rgb(17, 24, 39) 50%);">
+                <header class="mb-8"><h1 class="text-3xl font-bold">Registro Diario</h1><p class="text-white/60">Selecciona la acción que deseas realizar.</p></header>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                    <!-- Tarjeta para Registrar Venta -->
+                    <div id="trigger-sale-modal" class="rounded-2xl bg-green-500/20 backdrop-blur-md p-8 shadow-lg ring-1 ring-green-400/50 text-center cursor-pointer hover:bg-green-500/30 transition-all duration-300 transform hover:-translate-y-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01M12 6v.01M12 18v-2m0-2v-2m0-2v-2m0-2V6m0 12V6" /></svg>
+                        <h3 class="text-2xl font-bold">Registrar Venta</h3>
+                        <p class="text-white/70 mt-2">Añade un nuevo servicio completado y su ingreso.</p>
+                    </div>
+                    <!-- Tarjeta para Añadir Gasto -->
+                    <div id="trigger-expense-modal" class="rounded-2xl bg-red-500/20 backdrop-blur-md p-8 shadow-lg ring-1 ring-red-400/50 text-center cursor-pointer hover:bg-red-500/30 transition-all duration-300 transform hover:-translate-y-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <h3 class="text-2xl font-bold">Añadir Gasto</h3>
+                        <p class="text-white/70 mt-2">Registra una nueva compra o pago realizado.</p>
+                    </div>
+                </div>
+            </main>
+
+            <!-- SECCIÓN: FINANZAS -->
+            <main id="finances" class="page-content p-6 lg:p-8 hidden" style="background-image: radial-gradient(circle at top right, rgb(244, 63, 94), rgb(17, 24, 39) 50%);">
+                <header class="mb-8"><h1 class="text-3xl font-bold">Finanzas</h1><p class="text-white/60">Aquí está el detalle de todos tus movimientos financieros.</p></header>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10"><h4 class="text-sm font-semibold text-white/70">Ingresos Totales (Mes)</h4><p class="text-3xl font-bold mt-2 text-green-400">L 45,700</p></div>
+                    <div class="rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10"><h4 class="text-sm font-semibold text-white/70">Egresos Totales (Mes)</h4><p class="text-3xl font-bold mt-2 text-red-400">L 12,350</p></div>
+                    <div class="rounded-2xl bg-pink-500/20 backdrop-blur-md p-6 shadow-lg ring-1 ring-pink-400"><h4 class="text-sm font-semibold text-white/70">Ganancia Neta (Mes)</h4><p class="text-3xl font-bold mt-2 text-white">L 33,350</p></div>
+                </div>
+                <div class="rounded-2xl bg-white/10 backdrop-blur-md shadow-lg ring-1 ring-white/10"><div class="p-6 border-b border-white/10"><h3 class="text-xl font-bold">Historial de Transacciones</h3></div><div class="overflow-x-auto"><table class="w-full text-left"><thead><tr class="border-b border-white/10 text-sm text-white/60"><th class="p-4 font-semibold">Fecha</th><th class="p-4 font-semibold">Descripción</th><th class="p-4 font-semibold">Categoría</th><th class="p-4 font-semibold">Empleada</th><th class="p-4 font-semibold text-right">Monto</th></tr></thead><tbody><tr class="hover:bg-white/5 transition-colors"><td class="p-4">02 Ago, 2025</td><td class="p-4">Uñas Acrílicas + Diseño</td><td class="p-4"><span class="bg-blue-500/20 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">Servicio Uñas</span></td><td class="p-4">Ana</td><td class="p-4 text-right font-semibold text-green-400">+ L 800</td></tr><tr class="hover:bg-white/5 transition-colors"><td class="p-4">01 Ago, 2025</td><td class="p-4">Pago de Alquiler del Local</td><td class="p-4"><span class="bg-yellow-500/20 text-yellow-300 text-xs font-semibold px-2.5 py-1 rounded-full">Renta</span></td><td class="p-4 text-white/50">N/A</td><td class="p-4 text-right font-semibold text-red-400">- L 8,000</td></tr><tr class="hover:bg-white/5 transition-colors"><td class="p-4">01 Ago, 2025</td><td class="p-4">Tinte Completo y Corte</td><td class="p-4"><span class="bg-purple-500/20 text-purple-300 text-xs font-semibold px-2.5 py-1 rounded-full">Servicio Cabello</span></td><td class="p-4">Maria</td><td class="p-4 text-right font-semibold text-green-400">+ L 1,500</td></tr><tr class="hover:bg-white/5 transition-colors"><td class="p-4">31 Jul, 2025</td><td class="p-4">Compra de Esmaltes y Acetona</td><td class="p-4"><span class="bg-orange-500/20 text-orange-300 text-xs font-semibold px-2.5 py-1 rounded-full">Suministros</span></td><td class="p-4 text-white/50">N/A</td><td class="p-4 text-right font-semibold text-red-400">- L 1,200</td></tr><tr class="hover:bg-white/5 transition-colors"><td class="p-4">31 Jul, 2025</td><td class="p-4">Manicura Clásica</td><td class="p-4"><span class="bg-blue-500/20 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">Servicio Uñas</span></td><td class="p-4">Sofia</td><td class="p-4 text-right font-semibold text-green-400">+ L 500</td></tr></tbody></table></div></div>
+            </main>
+
+            <!-- SECCIÓN: REPORTES -->
+            <main id="reports" class="page-content p-6 lg:p-8 hidden" style="background-image: radial-gradient(circle at top right, rgb(244, 63, 94), rgb(17, 24, 39) 50%);">
+                <header class="mb-8"><h1 class="text-3xl font-bold">Reportes</h1><p class="text-white/60">Visualiza el rendimiento y crecimiento de tu negocio.</p></header>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2"><div class="rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10 h-full"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold">Ingresos vs. Egresos (Este Mes)</h3><select class="bg-slate-800/50 border border-white/20 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"><option>Este Mes</option><option>Mes Pasado</option><option>Últimos 90 días</option></select></div><div class="h-96"><canvas id="gananciasChart"></canvas></div></div></div>
+                    <div class="lg:col-span-1 space-y-8"><div class="rounded-2xl bg-pink-500/20 backdrop-blur-md p-6 shadow-lg ring-1 ring-pink-400"><h4 class="text-lg font-semibold text-white/80">Ganancia Neta (Mes)</h4><p class="text-5xl font-bold mt-2 text-white">L 33,350</p><p class="text-sm text-green-400 mt-1">+15% vs Mes Pasado</p></div><div class="rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10"><h3 class="text-xl font-bold mb-4">Gastos por Categoría</h3><div class="space-y-4"><div><div class="flex justify-between text-sm mb-1"><span>Renta</span><span>L 8,000</span></div><div class="w-full bg-slate-700 rounded-full h-2.5"><div class="bg-yellow-400 h-2.5 rounded-full" style="width: 65%"></div></div></div><div><div class="flex justify-between text-sm mb-1"><span>Suministros</span><span>L 2,850</span></div><div class="w-full bg-slate-700 rounded-full h-2.5"><div class="bg-orange-400 h-2.5 rounded-full" style="width: 23%"></div></div></div><div><div class="flex justify-between text-sm mb-1"><span>Servicios Públicos</span><span>L 1,500</span></div><div class="w-full bg-slate-700 rounded-full h-2.5"><div class="bg-sky-400 h-2.5 rounded-full" style="width: 12%"></div></div></div></div></div></div>
+                </div>
+            </main>
+            
+            <!-- SECCIÓN: CONFIGURACIÓN -->
+            <main id="settings" class="page-content p-6 lg:p-8 hidden" style="background-image: radial-gradient(circle at top right, rgb(244, 63, 94), rgb(17, 24, 39) 50%);">
+                <header class="mb-8">
+                    <h1 class="text-3xl font-bold">Configuración</h1>
+                    <p class="text-white/60">Personaliza las categorías y gestiona empleados de tu salón.</p>
+                </header>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Gestión de Empleados -->
+                    <div class="rounded-2xl bg-white/10 backdrop-blur-md shadow-lg ring-1 ring-white/10">
+                        <div class="p-6 border-b border-white/10 flex justify-between items-center">
+                            <h3 class="text-xl font-bold">Empleados</h3>
+                            <button id="add-employee-btn" class="bg-pink-500 hover:bg-pink-600 transition-colors rounded-lg px-3 py-1.5 text-sm font-semibold flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                </svg>
+                                Agregar
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <!-- Lista de empleados -->
+                                <div class="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+                                    <div class="flex items-center">
+                                        <div class="bg-pink-500/20 h-10 w-10 rounded-full flex items-center justify-center mr-3">
+                                            <span class="text-pink-300 font-bold">A</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold">Ana García</h4>
+                                            <p class="text-sm text-white/60">Especialista en Uñas</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </button>
+                                        <button class="text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+                                    <div class="flex items-center">
+                                        <div class="bg-pink-500/20 h-10 w-10 rounded-full flex items-center justify-center mr-3">
+                                            <span class="text-pink-300 font-bold">M</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold">Maria López</h4>
+                                            <p class="text-sm text-white/60">Estilista de Cabello</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </button>
+                                        <button class="text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+                                    <div class="flex items-center">
+                                        <div class="bg-pink-500/20 h-10 w-10 rounded-full flex items-center justify-center mr-3">
+                                            <span class="text-pink-300 font-bold">S</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold">Sofia Mendez</h4>
+                                            <p class="text-sm text-white/60">Manicurista</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                        </button>
+                                        <button class="text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Panel de Categorías -->
+                    <div class="space-y-8">
+                        <!-- Servicios -->
+                        <div class="rounded-2xl bg-green-500/20 backdrop-blur-md shadow-lg ring-1 ring-green-400/50">
+                            <div class="p-6 border-b border-green-400/30 flex justify-between items-center">
+                                <h3 class="text-xl font-bold">Servicios</h3>
+                                <button id="add-income-category-btn" class="bg-green-500 hover:bg-green-600 transition-colors rounded-lg px-3 py-1.5 text-sm font-semibold flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Agregar
+                                </button>
+                            </div>
+                            <div class="p-6">
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="bg-blue-500/20 h-8 w-8 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-blue-300 font-bold text-sm">U</span>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium">Manicura Clásica</span>
+                                                <p class="text-xs text-white/50 mt-0.5">L 350 · Servicio Uñas</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button class="text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </button>
+                                            <button class="text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="bg-purple-500/20 h-8 w-8 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-purple-300 font-bold text-sm">C</span>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium">Corte de Cabello</span>
+                                                <p class="text-xs text-white/50 mt-0.5">L 250 · Servicio Cabello</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button class="text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </button>
+                                            <button class="text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="bg-pink-500/20 h-8 w-8 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-pink-300 font-bold text-sm">T</span>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium">Facial Hidratante</span>
+                                                <p class="text-xs text-white/50 mt-0.5">L 600 · Tratamientos Faciales</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button class="text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </button>
+                                            <button class="text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tipos de Gasto -->
+                        <div class="rounded-2xl bg-red-500/20 backdrop-blur-md shadow-lg ring-1 ring-red-400/50">
+                            <div class="p-6 border-b border-red-400/30 flex justify-between items-center">
+                                <h3 class="text-xl font-bold">Tipos de Gasto</h3>
+                                <button id="add-expense-category-btn" class="bg-red-500 hover:bg-red-600 transition-colors rounded-lg px-3 py-1.5 text-sm font-semibold flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Agregar
+                                </button>
+                            </div>
+                            <div class="p-6">
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="bg-yellow-500/20 h-8 w-8 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-yellow-300 font-bold text-sm">R</span>
+                                            </div>
+                                            <div>
+                                                <div class="flex items-center">
+                                                    <span class="font-medium">Renta del Local</span>
+                                                    <span class="ml-2 text-xs px-1.5 py-0.5 bg-yellow-500/20 text-yellow-300 rounded-md">Recurrente</span>
+                                                </div>
+                                                <p class="text-xs text-white/50 mt-0.5">L 8,000 fijo mensual</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button class="text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </button>
+                                            <button class="text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="bg-orange-500/20 h-8 w-8 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-orange-300 font-bold text-sm">S</span>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium">Suministros</span>
+                                                <p class="text-xs text-white/50 mt-0.5">Compras de productos para el salón</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button class="text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </button>
+                                            <button class="text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="bg-sky-500/20 h-8 w-8 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-sky-300 font-bold text-sm">SP</span>
+                                            </div>
+                                            <div>
+                                                <div class="flex items-center">
+                                                    <span class="font-medium">Luz y Agua</span>
+                                                    <span class="ml-2 text-xs px-1.5 py-0.5 bg-sky-500/20 text-sky-300 rounded-md">Recurrente</span>
+                                                </div>
+                                                <p class="text-xs text-white/50 mt-0.5">L 1,500 aproximado mensual</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button class="text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </button>
+                                            <button class="text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+                                        <div class="flex items-center">
+                                            <div class="bg-indigo-500/20 h-8 w-8 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-indigo-300 font-bold text-sm">S</span>
+                                            </div>
+                                            <span>Salarios</span>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button class="text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </button>
+                                            <button class="text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal para Añadir Gasto -->
+    <div id="expense-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 transition-all duration-300 ease-in-out modal-hidden z-50">
+        <div class="w-full max-w-md rounded-2xl bg-slate-800/80 backdrop-blur-xl shadow-2xl ring-1 ring-white/10">
+            <div class="p-6 flex justify-between items-center border-b border-white/10"><h3 class="text-xl font-bold">Registrar Nuevo Gasto</h3><button id="close-expense-modal-btn" class="text-white/70 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+            <div class="p-6"><form class="space-y-4"><div><label for="expense-description" class="block text-sm font-medium text-white/80 mb-1">Descripción del Gasto</label><input type="text" id="expense-description" placeholder="Ej: Pago de luz, compra de café" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"></div><div><label for="expense-amount" class="block text-sm font-medium text-white/80 mb-1">Monto (L)</label><input type="number" id="expense-amount" placeholder="0.00" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"></div><div><label for="expense-category" class="block text-sm font-medium text-white/80 mb-1">Categoría</label><select id="expense-category" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"><option>Renta</option><option>Suministros</option><option>Salarios</option><option>Servicios Públicos (luz, agua)</option><option>Marketing</option><option>Otro</option></select></div><div class="pt-4 flex justify-end gap-4"><button type="button" id="cancel-expense-btn" class="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-5 py-2.5 font-semibold">Cancelar</button><button type="submit" class="bg-red-500 hover:bg-red-600 transition-colors rounded-lg px-5 py-2.5 font-bold">Guardar Gasto</button></div></form></div>
+        </div>
+    </div>
+    
+    <!-- Modal para Registrar Venta -->
+    <div id="sale-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 transition-all duration-300 ease-in-out modal-hidden z-50">
+        <div class="w-full max-w-md rounded-2xl bg-slate-800/80 backdrop-blur-xl shadow-2xl ring-1 ring-white/10">
+            <div class="p-6 flex justify-between items-center border-b border-white/10"><h3 class="text-xl font-bold">Registrar Nueva Venta</h3><button id="close-sale-modal-btn" class="text-white/70 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+            <div class="p-6"><form class="space-y-4"><div><label for="sale-service" class="block text-sm font-medium text-white/80 mb-1">Servicio Realizado</label><select id="sale-service" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"><option>Manicura Clásica</option><option>Uñas Acrílicas</option><option>Corte de Cabello</option><option>Tinte Completo</option><option>Otro</option></select></div><div><label for="sale-amount" class="block text-sm font-medium text-white/80 mb-1">Monto (L)</label><input type="number" id="sale-amount" placeholder="0.00" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"></div><div><label for="sale-employee" class="block text-sm font-medium text-white/80 mb-1">Empleada</label><select id="sale-employee" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"><option>Ana</option><option>Maria</option><option>Sofia</option></select></div><div class="pt-4 flex justify-end gap-4"><button type="button" id="cancel-sale-btn" class="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-5 py-2.5 font-semibold">Cancelar</button><button type="submit" class="bg-green-500 hover:bg-green-600 transition-colors rounded-lg px-5 py-2.5 font-bold">Guardar Venta</button></div></form></div>
+        </div>
+    </div>
+    
+    <!-- Modal para Agregar Empleado -->
+    <div id="employee-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 transition-all duration-300 ease-in-out modal-hidden z-50">
+        <div class="w-full max-w-md rounded-2xl bg-slate-800/80 backdrop-blur-xl shadow-2xl ring-1 ring-white/10">
+            <div class="p-6 flex justify-between items-center border-b border-white/10">
+                <h3 class="text-xl font-bold">Agregar Nuevo Empleado</h3>
+                <button id="close-employee-modal-btn" class="text-white/70 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <form class="space-y-4">
+                    <div>
+                        <label for="employee-name" class="block text-sm font-medium text-white/80 mb-1">Nombre Completo</label>
+                        <input type="text" id="employee-name" placeholder="Nombre y Apellido" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label for="employee-position" class="block text-sm font-medium text-white/80 mb-1">Especialidad</label>
+                        <input type="text" id="employee-position" placeholder="Ej: Estilista, Manicurista, etc." class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label for="employee-phone" class="block text-sm font-medium text-white/80 mb-1">Teléfono (opcional)</label>
+                        <input type="tel" id="employee-phone" placeholder="Número de teléfono" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div class="pt-4 flex justify-end gap-4">
+                        <button type="button" id="cancel-employee-btn" class="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-5 py-2.5 font-semibold">Cancelar</button>
+                        <button type="submit" class="bg-pink-500 hover:bg-pink-600 transition-colors rounded-lg px-5 py-2.5 font-bold">Guardar Empleado</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para Agregar Servicio -->
+    <div id="income-category-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 transition-all duration-300 ease-in-out modal-hidden z-50">
+        <div class="w-full max-w-md rounded-2xl bg-slate-800/80 backdrop-blur-xl shadow-2xl ring-1 ring-white/10">
+            <div class="p-6 flex justify-between items-center border-b border-white/10">
+                <h3 class="text-xl font-bold">Agregar Nuevo Servicio</h3>
+                <button id="close-income-category-modal-btn" class="text-white/70 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <form class="space-y-4">
+                    <div>
+                        <label for="income-category-name" class="block text-sm font-medium text-white/80 mb-1">Nombre del Servicio</label>
+                        <input type="text" id="income-category-name" placeholder="Ej: Manicura Clásica" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label for="service-price" class="block text-sm font-medium text-white/80 mb-1">Precio Predeterminado (L) <span class="text-xs text-white/50">(opcional)</span></label>
+                        <input type="number" id="service-price" placeholder="0.00" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label for="service-description" class="block text-sm font-medium text-white/80 mb-1">Descripción <span class="text-xs text-white/50">(opcional)</span></label>
+                        <textarea id="service-description" rows="2" placeholder="Breve descripción del servicio" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Color de la Categoría</label>
+                        <div class="grid grid-cols-5 gap-2">
+                            <button type="button" class="h-8 w-8 rounded-full bg-blue-500 ring-2 ring-offset-2 ring-offset-slate-800 ring-blue-500"></button>
+                            <button type="button" class="h-8 w-8 rounded-full bg-purple-500"></button>
+                            <button type="button" class="h-8 w-8 rounded-full bg-pink-500"></button>
+                            <button type="button" class="h-8 w-8 rounded-full bg-green-500"></button>
+                            <button type="button" class="h-8 w-8 rounded-full bg-amber-500"></button>
+                        </div>
+                    </div>
+                    <div class="pt-4 flex justify-end gap-4">
+                        <button type="button" id="cancel-income-category-btn" class="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-5 py-2.5 font-semibold">Cancelar</button>
+                        <button type="submit" class="bg-green-500 hover:bg-green-600 transition-colors rounded-lg px-5 py-2.5 font-bold">Guardar Servicio</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para Agregar Tipo de Gasto -->
+    <div id="expense-category-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 transition-all duration-300 ease-in-out modal-hidden z-50">
+        <div class="w-full max-w-md rounded-2xl bg-slate-800/80 backdrop-blur-xl shadow-2xl ring-1 ring-white/10">
+            <div class="p-6 flex justify-between items-center border-b border-white/10">
+                <h3 class="text-xl font-bold">Agregar Tipo de Gasto</h3>
+                <button id="close-expense-category-modal-btn" class="text-white/70 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <form class="space-y-4">
+                    <div>
+                        <label for="expense-category-name" class="block text-sm font-medium text-white/80 mb-1">Nombre del Gasto</label>
+                        <input type="text" id="expense-category-name" placeholder="Ej: Renta del Local" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label for="expense-description" class="block text-sm font-medium text-white/80 mb-1">Descripción <span class="text-xs text-white/50">(opcional)</span></label>
+                        <textarea id="expense-description" rows="2" placeholder="Breve descripción del tipo de gasto" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
+                    </div>
+                    <div>
+                        <label for="expense-fixed-amount" class="block text-sm font-medium text-white/80 mb-1">Monto Fijo (L) <span class="text-xs text-white/50">(opcional)</span></label>
+                        <input type="number" id="expense-fixed-amount" placeholder="0.00" class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="expense-recurring" class="h-5 w-5 bg-slate-700/50 border border-white/20 rounded focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        <label for="expense-recurring" class="ml-2 text-sm font-medium text-white/80">Gasto recurrente mensual</label>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Color del Tipo</label>
+                        <div class="grid grid-cols-5 gap-2">
+                            <button type="button" class="h-8 w-8 rounded-full bg-yellow-500 ring-2 ring-offset-2 ring-offset-slate-800 ring-yellow-500"></button>
+                            <button type="button" class="h-8 w-8 rounded-full bg-orange-500"></button>
+                            <button type="button" class="h-8 w-8 rounded-full bg-red-500"></button>
+                            <button type="button" class="h-8 w-8 rounded-full bg-sky-500"></button>
+                            <button type="button" class="h-8 w-8 rounded-full bg-indigo-500"></button>
+                        </div>
+                    </div>
+                    <div class="pt-4 flex justify-end gap-4">
+                        <button type="button" id="cancel-expense-category-btn" class="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-5 py-2.5 font-semibold">Cancelar</button>
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 transition-colors rounded-lg px-5 py-2.5 font-bold">Guardar Tipo de Gasto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- LÓGICA DE NAVEGACIÓN ---
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page-content');
+
+            function showPage(pageId) {
+                pages.forEach(page => page.classList.add('hidden'));
+                const activePage = document.getElementById(pageId);
+                if (activePage) activePage.classList.remove('hidden');
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = link.getAttribute('href').substring(1);
+                    
+                    navLinks.forEach(navLink => {
+                        navLink.classList.remove('bg-pink-500/20');
+                        navLink.classList.add('hover:bg-white/10');
+                    });
+                    link.classList.add('bg-pink-500/20');
+                    link.classList.remove('hover:bg-white/10');
+
+                    showPage(pageId);
+                });
+            });
+
+            showPage('dashboard');
+
+            // --- LÓGICA PARA MODALES ---
+            const saleModal = document.getElementById('sale-modal');
+            const expenseModal = document.getElementById('expense-modal');
+            const employeeModal = document.getElementById('employee-modal');
+            const incomeCategoryModal = document.getElementById('income-category-modal');
+            const expenseCategoryModal = document.getElementById('expense-category-modal');
+            
+            // Botones para abrir modales principales
+            document.getElementById('trigger-sale-modal').addEventListener('click', () => saleModal.classList.remove('modal-hidden'));
+            document.getElementById('trigger-expense-modal').addEventListener('click', () => expenseModal.classList.remove('modal-hidden'));
+
+            // Botones para cerrar modales principales
+            document.getElementById('close-sale-modal-btn').addEventListener('click', () => saleModal.classList.add('modal-hidden'));
+            document.getElementById('cancel-sale-btn').addEventListener('click', () => saleModal.classList.add('modal-hidden'));
+            
+            document.getElementById('close-expense-modal-btn').addEventListener('click', () => expenseModal.classList.add('modal-hidden'));
+            document.getElementById('cancel-expense-btn').addEventListener('click', () => expenseModal.classList.add('modal-hidden'));
+            
+            // Botones para modales de configuración
+            document.getElementById('add-employee-btn').addEventListener('click', () => employeeModal.classList.remove('modal-hidden'));
+            document.getElementById('close-employee-modal-btn').addEventListener('click', () => employeeModal.classList.add('modal-hidden'));
+            document.getElementById('cancel-employee-btn').addEventListener('click', () => employeeModal.classList.add('modal-hidden'));
+            
+            document.getElementById('add-income-category-btn').addEventListener('click', () => incomeCategoryModal.classList.remove('modal-hidden'));
+            document.getElementById('close-income-category-modal-btn').addEventListener('click', () => incomeCategoryModal.classList.add('modal-hidden'));
+            document.getElementById('cancel-income-category-btn').addEventListener('click', () => incomeCategoryModal.classList.add('modal-hidden'));
+            
+            document.getElementById('add-expense-category-btn').addEventListener('click', () => expenseCategoryModal.classList.remove('modal-hidden'));
+            document.getElementById('close-expense-category-modal-btn').addEventListener('click', () => expenseCategoryModal.classList.add('modal-hidden'));
+            document.getElementById('cancel-expense-category-btn').addEventListener('click', () => expenseCategoryModal.classList.add('modal-hidden'));
+            
+            // --- LÓGICA PARA EL GRÁFICO ---
+            try {
+                const ctx = document.getElementById('gananciasChart').getContext('2d');
+                const gradientIngresos = ctx.createLinearGradient(0, 0, 0, 300);
+                gradientIngresos.addColorStop(0, 'rgba(74, 222, 128, 0.6)');
+                gradientIngresos.addColorStop(1, 'rgba(74, 222, 128, 0)');
+
+                const gradientEgresos = ctx.createLinearGradient(0, 0, 0, 300);
+                gradientEgresos.addColorStop(0, 'rgba(248, 113, 113, 0.6)');
+                gradientEgresos.addColorStop(1, 'rgba(248, 113, 113, 0)');
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+                        datasets: [{
+                            label: 'Ingresos',
+                            data: [10200, 12500, 11800, 11200],
+                            backgroundColor: gradientIngresos,
+                            borderColor: '#4ade80',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }, {
+                            label: 'Egresos',
+                            data: [3000, 3500, 2850, 3000],
+                            backgroundColor: gradientEgresos,
+                            borderColor: '#f87171',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { labels: { color: '#cbd5e1' } } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                            x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error("Error al inicializar el gráfico:", e);
+            }
+        });
+    </script>
+</body>
+</html>
