@@ -52,6 +52,29 @@ document.addEventListener('DOMContentLoaded', () => {
             item.id = new Date().getTime(); // Simple unique ID
             data.push(item);
             this.set(key, data);
+        },
+
+        update: function (key, id, updatedItem) {
+            const data = this.get(key);
+            const index = data.findIndex(item => item.id === id);
+            if (index !== -1) {
+                // Mantener el ID original
+                updatedItem.id = id;
+                data[index] = updatedItem;
+                this.set(key, data);
+                return true;
+            }
+            return false;
+        },
+
+        delete: function (key, id) {
+            const data = this.get(key);
+            const newData = data.filter(item => item.id !== id);
+            if (newData.length !== data.length) {
+                this.set(key, newData);
+                return true;
+            }
+            return false;
         }
     };
 
@@ -82,7 +105,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p class="text-sm text-white/60">${emp.position}</p>
                         </div>
                     </div>
-                    <!-- Edit/Delete buttons would go here -->
+                    <div class="flex space-x-2">
+                        <button class="edit-employee text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10" data-id="${emp.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                        </button>
+                        <button class="delete-employee text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10" data-id="${emp.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             `).join('');
         },
@@ -101,7 +135,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p class="text-xs text-white/50 mt-0.5">L ${cat.price} · ${cat.description}</p>
                         </div>
                     </div>
-                    <!-- Edit/Delete buttons would go here -->
+                    <div class="flex space-x-2">
+                        <button class="edit-income-category text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10" data-id="${cat.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                        </button>
+                        <button class="delete-income-category text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10" data-id="${cat.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             `).join('');
         },
@@ -123,7 +168,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p class="text-xs text-white/50 mt-0.5">${cat.description}</p>
                         </div>
                     </div>
-                    <!-- Edit/Delete buttons would go here -->
+                    <div class="flex space-x-2">
+                        <button class="edit-expense-category text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10" data-id="${cat.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                        </button>
+                        <button class="delete-expense-category text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10" data-id="${cat.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             `).join('');
         },
@@ -144,6 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <th class="p-4 font-semibold">Categoría</th>
                         <th class="p-4 font-semibold">Empleada</th>
                         <th class="p-4 font-semibold text-right">Monto</th>
+                        <th class="p-4 font-semibold text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -185,6 +242,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td class="p-4 ${isIncome ? '' : 'text-white/50'}">${employeeName}</td>
                         <td class="p-4 text-right font-semibold ${isIncome ? 'text-green-400' : 'text-red-400'}">
                             ${isIncome ? '+' : '-'} L ${tx.amount.toFixed(2)}
+                        </td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center space-x-2">
+                                <button class="edit-transaction text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10" data-id="${tx.id}" data-type="${tx.type}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                </button>
+                                <button class="delete-transaction text-white/70 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/10" data-id="${tx.id}" data-type="${tx.type}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -359,6 +430,8 @@ document.addEventListener('DOMContentLoaded', () => {
             this.setupForms();
             UI.renderAll();
             this.setupCharts();
+            // Configurar los botones de editar/eliminar
+            this.setupItemActions();
             // Intentar restaurar la página en la que estaba el usuario
             this.restorePageState();
         },
@@ -445,6 +518,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 close.forEach(btnId => {
                     document.getElementById(btnId).addEventListener('click', () => modalEl.classList.add('modal-hidden'));
                 });
+            });
+
+            // Configurar los modales de confirmación de éxito
+            const successModals = [
+                { modal: 'success-sale-modal', close: 'close-sale-success-btn' },
+                { modal: 'success-expense-modal', close: 'close-expense-success-btn' }
+            ];
+
+            successModals.forEach(({ modal, close }) => {
+                const modalEl = document.getElementById(modal);
+                const closeBtn = document.getElementById(close);
+                closeBtn.addEventListener('click', () => {
+                    modalEl.classList.add('modal-hidden');
+                    // Restaurar a la página en la que estaba el usuario
+                    this.restorePageState();
+                });
+            });
+
+            // Configurar modales de edición
+            const editModals = [
+                { modal: 'edit-employee-modal', close: ['close-edit-employee-modal-btn', 'cancel-edit-employee-btn'] },
+                { modal: 'edit-income-category-modal', close: ['close-edit-income-category-modal-btn', 'cancel-edit-income-category-btn'] },
+                { modal: 'edit-expense-category-modal', close: ['close-edit-expense-category-modal-btn', 'cancel-edit-expense-category-btn'] },
+                { modal: 'edit-transaction-modal', close: ['close-edit-transaction-modal-btn', 'cancel-edit-transaction-btn'] },
+                { modal: 'delete-confirmation-modal', close: ['cancel-delete-btn'] }
+            ];
+
+            editModals.forEach(({ modal, close }) => {
+                const modalEl = document.getElementById(modal);
+                close.forEach(btnId => {
+                    document.getElementById(btnId).addEventListener('click', () => modalEl.classList.add('modal-hidden'));
+                });
+            });
+
+            // Configurar el botón de confirmar eliminación
+            document.getElementById('confirm-delete-btn').addEventListener('click', () => {
+                const itemId = parseInt(document.getElementById('delete-item-id').value);
+                const itemType = document.getElementById('delete-item-type').value;
+
+                if (itemId && itemType) {
+                    switch (itemType) {
+                        case 'employee':
+                            DB.delete('employees', itemId);
+                            UI.renderEmployees();
+                            UI.populateSelects();
+                            break;
+                        case 'incomeCategory':
+                            DB.delete('incomeCategories', itemId);
+                            UI.renderIncomeCategories();
+                            UI.populateSelects();
+                            break;
+                        case 'expenseCategory':
+                            DB.delete('expenseCategories', itemId);
+                            UI.renderExpenseCategories();
+                            UI.populateSelects();
+                            break;
+                        case 'transaction':
+                            DB.delete('transactions', itemId);
+                            UI.renderTransactionHistory();
+                            UI.renderDashboard();
+                            break;
+                    }
+                }
+
+                document.getElementById('delete-confirmation-modal').classList.add('modal-hidden');
             });
         },
 
@@ -561,14 +699,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('sale-modal').classList.add('modal-hidden');
                 e.target.reset();
 
-                // Restaurar a la página en la que estaba el usuario
-                this.restorePageState();
+                // Mostrar el modal de confirmación de éxito
+                document.getElementById('success-sale-modal').classList.remove('modal-hidden');
 
-                // Mostrar una notificación de éxito
-                alert('Venta registrada con éxito');
-            });
-
-            // Add Expense
+                // Configurar el cierre del modal de confirmación después de un tiempo
+                setTimeout(() => {
+                    // Restaurar a la página en la que estaba el usuario
+                    this.restorePageState();
+                }, 1000);
+            });            // Add Expense
             document.querySelector('#expense-modal form').addEventListener('submit', e => {
                 e.preventDefault();
 
@@ -593,11 +732,234 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('expense-modal').classList.add('modal-hidden');
                 e.target.reset();
 
-                // Restaurar a la página en la que estaba el usuario
-                this.restorePageState();
+                // Mostrar el modal de confirmación de éxito
+                document.getElementById('success-expense-modal').classList.remove('modal-hidden');
 
-                // Mostrar una notificación de éxito
-                alert('Gasto registrado con éxito');
+                // Configurar el cierre del modal de confirmación después de un tiempo
+                setTimeout(() => {
+                    // Restaurar a la página en la que estaba el usuario
+                    this.restorePageState();
+                }, 1000);
+            });
+        },
+
+        setupItemActions: function () {
+            // Delegación de eventos para manejar clics en botones de editar/eliminar
+            document.addEventListener('click', (e) => {
+                // Botones para eliminar empleados
+                if (e.target.closest('.delete-employee')) {
+                    const button = e.target.closest('.delete-employee');
+                    const id = parseInt(button.dataset.id);
+
+                    document.getElementById('delete-item-id').value = id;
+                    document.getElementById('delete-item-type').value = 'employee';
+                    document.getElementById('delete-confirmation-modal').classList.remove('modal-hidden');
+                }
+
+                // Botones para eliminar categorías de ingresos
+                else if (e.target.closest('.delete-income-category')) {
+                    const button = e.target.closest('.delete-income-category');
+                    const id = parseInt(button.dataset.id);
+
+                    document.getElementById('delete-item-id').value = id;
+                    document.getElementById('delete-item-type').value = 'incomeCategory';
+                    document.getElementById('delete-confirmation-modal').classList.remove('modal-hidden');
+                }
+
+                // Botones para eliminar categorías de gastos
+                else if (e.target.closest('.delete-expense-category')) {
+                    const button = e.target.closest('.delete-expense-category');
+                    const id = parseInt(button.dataset.id);
+
+                    document.getElementById('delete-item-id').value = id;
+                    document.getElementById('delete-item-type').value = 'expenseCategory';
+                    document.getElementById('delete-confirmation-modal').classList.remove('modal-hidden');
+                }
+
+                // Botones para eliminar transacciones
+                else if (e.target.closest('.delete-transaction')) {
+                    const button = e.target.closest('.delete-transaction');
+                    const id = parseInt(button.dataset.id);
+
+                    document.getElementById('delete-item-id').value = id;
+                    document.getElementById('delete-item-type').value = 'transaction';
+                    document.getElementById('delete-confirmation-modal').classList.remove('modal-hidden');
+                }
+
+                // Botones para editar empleados
+                else if (e.target.closest('.edit-employee')) {
+                    const button = e.target.closest('.edit-employee');
+                    const id = parseInt(button.dataset.id);
+                    const employee = DB.get('employees').find(emp => emp.id === id);
+
+                    if (employee) {
+                        document.getElementById('edit-employee-id').value = id;
+                        document.getElementById('edit-employee-name').value = employee.name;
+                        document.getElementById('edit-employee-position').value = employee.position;
+
+                        document.getElementById('edit-employee-modal').classList.remove('modal-hidden');
+
+                        // Configurar el formulario para actualizar el empleado
+                        document.getElementById('edit-employee-form').onsubmit = (e) => {
+                            e.preventDefault();
+                            const name = document.getElementById('edit-employee-name').value;
+                            const position = document.getElementById('edit-employee-position').value;
+
+                            if (name && position) {
+                                DB.update('employees', id, { name, position });
+                                UI.renderEmployees();
+                                UI.populateSelects();
+                                document.getElementById('edit-employee-modal').classList.add('modal-hidden');
+                            }
+                        };
+                    }
+                }
+
+                // Botones para editar categorías de ingresos
+                else if (e.target.closest('.edit-income-category')) {
+                    const button = e.target.closest('.edit-income-category');
+                    const id = parseInt(button.dataset.id);
+                    const category = DB.get('incomeCategories').find(cat => cat.id === id);
+
+                    if (category) {
+                        document.getElementById('edit-income-category-id').value = id;
+                        document.getElementById('edit-income-category-name').value = category.name;
+                        document.getElementById('edit-service-price').value = category.price;
+                        document.getElementById('edit-service-description').value = category.description;
+                        document.getElementById('edit-service-color').value = category.color;
+
+                        document.getElementById('edit-income-category-modal').classList.remove('modal-hidden');
+
+                        // Configurar el formulario para actualizar la categoría
+                        document.getElementById('edit-income-category-form').onsubmit = (e) => {
+                            e.preventDefault();
+                            const name = document.getElementById('edit-income-category-name').value;
+                            const price = parseFloat(document.getElementById('edit-service-price').value);
+                            const description = document.getElementById('edit-service-description').value;
+                            const color = document.getElementById('edit-service-color').value;
+
+                            if (name && price && description && color) {
+                                DB.update('incomeCategories', id, { name, price, description, color });
+                                UI.renderIncomeCategories();
+                                UI.populateSelects();
+                                document.getElementById('edit-income-category-modal').classList.add('modal-hidden');
+                            }
+                        };
+                    }
+                }
+
+                // Botones para editar categorías de gastos
+                else if (e.target.closest('.edit-expense-category')) {
+                    const button = e.target.closest('.edit-expense-category');
+                    const id = parseInt(button.dataset.id);
+                    const category = DB.get('expenseCategories').find(cat => cat.id === id);
+
+                    if (category) {
+                        document.getElementById('edit-expense-category-id').value = id;
+                        document.getElementById('edit-expense-category-name').value = category.name;
+                        document.getElementById('edit-expense-description').value = category.description;
+                        document.getElementById('edit-expense-fixed-amount').value = category.amount || '';
+                        document.getElementById('edit-expense-recurring').checked = category.recurring;
+                        document.getElementById('edit-expense-color').value = category.color;
+
+                        document.getElementById('edit-expense-category-modal').classList.remove('modal-hidden');
+
+                        // Configurar el formulario para actualizar la categoría
+                        document.getElementById('edit-expense-category-form').onsubmit = (e) => {
+                            e.preventDefault();
+                            const name = document.getElementById('edit-expense-category-name').value;
+                            const description = document.getElementById('edit-expense-description').value;
+                            const amount = document.getElementById('edit-expense-fixed-amount').value
+                                ? parseFloat(document.getElementById('edit-expense-fixed-amount').value)
+                                : null;
+                            const recurring = document.getElementById('edit-expense-recurring').checked;
+                            const color = document.getElementById('edit-expense-color').value;
+
+                            if (name && description && color) {
+                                DB.update('expenseCategories', id, { name, description, amount, recurring, color });
+                                UI.renderExpenseCategories();
+                                UI.populateSelects();
+                                document.getElementById('edit-expense-category-modal').classList.add('modal-hidden');
+                            }
+                        };
+                    }
+                }
+
+                // Botones para editar transacciones
+                else if (e.target.closest('.edit-transaction')) {
+                    const button = e.target.closest('.edit-transaction');
+                    const id = parseInt(button.dataset.id);
+                    const type = button.dataset.type;
+                    const transaction = DB.get('transactions').find(tx => tx.id === id);
+
+                    if (transaction) {
+                        document.getElementById('edit-transaction-id').value = id;
+                        document.getElementById('edit-transaction-type').value = type;
+                        document.getElementById('edit-transaction-amount').value = transaction.amount;
+                        document.getElementById('edit-transaction-date').value = transaction.date;
+
+                        // Mostrar/ocultar campos según el tipo
+                        const incomeFields = document.getElementById('edit-transaction-income-fields');
+                        const expenseFields = document.getElementById('edit-transaction-expense-fields');
+
+                        if (type === 'income') {
+                            incomeFields.style.display = 'block';
+                            expenseFields.style.display = 'none';
+
+                            // Llenar selects
+                            const serviceSelect = document.getElementById('edit-transaction-service');
+                            const employeeSelect = document.getElementById('edit-transaction-employee');
+
+                            const incomeCategories = DB.get('incomeCategories');
+                            const employees = DB.get('employees');
+
+                            serviceSelect.innerHTML = incomeCategories.map(c =>
+                                `<option value="${c.id}" ${c.id === transaction.categoryId ? 'selected' : ''}>${c.name}</option>`
+                            ).join('');
+
+                            employeeSelect.innerHTML = employees.map(e =>
+                                `<option value="${e.id}" ${e.id === transaction.employeeId ? 'selected' : ''}>${e.name}</option>`
+                            ).join('');
+                        } else {
+                            incomeFields.style.display = 'none';
+                            expenseFields.style.display = 'block';
+
+                            document.getElementById('edit-transaction-description').value = transaction.description;
+
+                            // Llenar select de categorías
+                            const categorySelect = document.getElementById('edit-transaction-category');
+                            const expenseCategories = DB.get('expenseCategories');
+
+                            categorySelect.innerHTML = expenseCategories.map(c =>
+                                `<option value="${c.id}" ${c.id === transaction.categoryId ? 'selected' : ''}>${c.name}</option>`
+                            ).join('');
+                        }
+
+                        document.getElementById('edit-transaction-modal').classList.remove('modal-hidden');
+
+                        // Configurar el formulario para actualizar la transacción
+                        document.getElementById('edit-transaction-form').onsubmit = (e) => {
+                            e.preventDefault();
+                            const updatedTx = { ...transaction };
+
+                            updatedTx.amount = parseFloat(document.getElementById('edit-transaction-amount').value);
+                            updatedTx.date = document.getElementById('edit-transaction-date').value;
+
+                            if (type === 'income') {
+                                updatedTx.categoryId = parseInt(document.getElementById('edit-transaction-service').value);
+                                updatedTx.employeeId = parseInt(document.getElementById('edit-transaction-employee').value);
+                            } else {
+                                updatedTx.description = document.getElementById('edit-transaction-description').value;
+                                updatedTx.categoryId = parseInt(document.getElementById('edit-transaction-category').value);
+                            }
+
+                            DB.update('transactions', id, updatedTx);
+                            UI.renderTransactionHistory();
+                            UI.renderDashboard();
+                            document.getElementById('edit-transaction-modal').classList.add('modal-hidden');
+                        };
+                    }
+                }
             });
         },
 

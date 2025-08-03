@@ -906,6 +906,326 @@
         </div>
     </div>
 
+    <!-- Modal de Confirmación de Venta -->
+    <div id="success-sale-modal"
+        class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 transition-all duration-300 ease-in-out modal-hidden z-50">
+        <div class="w-full max-w-sm rounded-2xl bg-slate-800/80 backdrop-blur-xl shadow-2xl ring-1 ring-green-500/50">
+            <div class="p-6 flex justify-center items-center flex-col text-center">
+                <div class="bg-green-500/20 h-20 w-20 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">¡Venta Registrada!</h3>
+                <p class="text-white/70 mb-6">La venta ha sido registrada con éxito.</p>
+                <button id="close-sale-success-btn"
+                    class="bg-green-500 hover:bg-green-600 transition-colors rounded-lg px-5 py-2.5 w-full font-bold">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación de Gasto -->
+    <div id="success-expense-modal"
+        class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 transition-all duration-300 ease-in-out modal-hidden z-50">
+        <div class="w-full max-w-sm rounded-2xl bg-slate-800/80 backdrop-blur-xl shadow-2xl ring-1 ring-red-500/50">
+            <div class="p-6 flex justify-center items-center flex-col text-center">
+                <div class="bg-red-500/20 h-20 w-20 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">¡Gasto Registrado!</h3>
+                <p class="text-white/70 mb-6">El gasto ha sido registrado con éxito.</p>
+                <button id="close-expense-success-btn"
+                    class="bg-red-500 hover:bg-red-600 transition-colors rounded-lg px-5 py-2.5 w-full font-bold">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación de Eliminación -->
+    <div id="delete-confirmation-modal"
+        class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 transition-all duration-300 ease-in-out modal-hidden z-50">
+        <div class="w-full max-w-sm rounded-2xl bg-slate-800/80 backdrop-blur-xl shadow-2xl ring-1 ring-red-500/50">
+            <div class="p-6 flex justify-center items-center flex-col text-center">
+                <div class="bg-red-500/20 h-20 w-20 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2">¿Estás seguro?</h3>
+                <p class="text-white/70 mb-6">Esta acción no se puede deshacer.</p>
+                <input type="hidden" id="delete-item-id">
+                <input type="hidden" id="delete-item-type">
+                <div class="flex w-full space-x-3">
+                    <button id="cancel-delete-btn"
+                        class="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-5 py-2.5 flex-1 font-bold">
+                        Cancelar
+                    </button>
+                    <button id="confirm-delete-btn"
+                        class="bg-red-500 hover:bg-red-600 transition-colors rounded-lg px-5 py-2.5 flex-1 font-bold">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edición de Empleado -->
+    <div id="edit-employee-modal"
+        class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 transition-all duration-300 ease-in-out modal-hidden z-50">
+        <div class="w-full max-w-md rounded-2xl bg-slate-800/80 backdrop-blur-xl shadow-2xl ring-1 ring-white/10">
+            <div class="p-6 flex justify-between items-center border-b border-white/10">
+                <h3 class="text-xl font-bold">Editar Empleado</h3>
+                <button id="close-edit-employee-modal-btn" class="text-white/70 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <form id="edit-employee-form" class="space-y-4">
+                    <input type="hidden" id="edit-employee-id">
+                    <div>
+                        <label for="edit-employee-name" class="block text-sm font-medium text-white/80 mb-1">Nombre
+                            Completo</label>
+                        <input type="text" id="edit-employee-name" placeholder="Nombre y Apellido" required
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label for="edit-employee-position"
+                            class="block text-sm font-medium text-white/80 mb-1">Especialidad</label>
+                        <input type="text" id="edit-employee-position" placeholder="Ej: Estilista, Manicurista, etc."
+                            required
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div class="pt-4 flex justify-end gap-4">
+                        <button type="button" id="cancel-edit-employee-btn"
+                            class="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-5 py-2.5 font-semibold">Cancelar</button>
+                        <button type="submit"
+                            class="bg-pink-500 hover:bg-pink-600 transition-colors rounded-lg px-5 py-2.5 font-bold">Guardar
+                            Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edición de Servicio -->
+    <div id="edit-income-category-modal"
+        class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 transition-all duration-300 ease-in-out modal-hidden z-50">
+        <div class="w-full max-w-md rounded-2xl bg-slate-800/80 backdrop-blur-xl shadow-2xl ring-1 ring-white/10">
+            <div class="p-6 flex justify-between items-center border-b border-white/10">
+                <h3 class="text-xl font-bold">Editar Servicio</h3>
+                <button id="close-edit-income-category-modal-btn" class="text-white/70 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <form id="edit-income-category-form" class="space-y-4">
+                    <input type="hidden" id="edit-income-category-id">
+                    <div>
+                        <label for="edit-income-category-name"
+                            class="block text-sm font-medium text-white/80 mb-1">Nombre
+                            del Servicio</label>
+                        <input type="text" id="edit-income-category-name" placeholder="Ej: Manicura Clásica" required
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label for="edit-service-price" class="block text-sm font-medium text-white/80 mb-1">Precio
+                            Predeterminado (L)</label>
+                        <input type="number" id="edit-service-price" placeholder="0.00" required
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label for="edit-service-description"
+                            class="block text-sm font-medium text-white/80 mb-1">Descripción</label>
+                        <textarea id="edit-service-description" rows="2" placeholder="Breve descripción del servicio"
+                            required
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
+                    </div>
+                    <div>
+                        <label for="edit-service-color" class="block text-sm font-medium text-white/80 mb-2">Color de la
+                            Categoría</label>
+                        <select id="edit-service-color"
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            required>
+                            <option value="blue">Azul</option>
+                            <option value="purple">Morado</option>
+                            <option value="pink">Rosa</option>
+                            <option value="green">Verde</option>
+                            <option value="amber">Ámbar</option>
+                        </select>
+                    </div>
+                    <div class="pt-4 flex justify-end gap-4">
+                        <button type="button" id="cancel-edit-income-category-btn"
+                            class="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-5 py-2.5 font-semibold">Cancelar</button>
+                        <button type="submit"
+                            class="bg-green-500 hover:bg-green-600 transition-colors rounded-lg px-5 py-2.5 font-bold">Guardar
+                            Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edición de Tipo de Gasto -->
+    <div id="edit-expense-category-modal"
+        class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 transition-all duration-300 ease-in-out modal-hidden z-50">
+        <div class="w-full max-w-md rounded-2xl bg-slate-800/80 backdrop-blur-xl shadow-2xl ring-1 ring-white/10">
+            <div class="p-6 flex justify-between items-center border-b border-white/10">
+                <h3 class="text-xl font-bold">Editar Tipo de Gasto</h3>
+                <button id="close-edit-expense-category-modal-btn" class="text-white/70 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <form id="edit-expense-category-form" class="space-y-4">
+                    <input type="hidden" id="edit-expense-category-id">
+                    <div>
+                        <label for="edit-expense-category-name"
+                            class="block text-sm font-medium text-white/80 mb-1">Nombre
+                            del Gasto</label>
+                        <input type="text" id="edit-expense-category-name" placeholder="Ej: Renta del Local" required
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label for="edit-expense-description"
+                            class="block text-sm font-medium text-white/80 mb-1">Descripción</label>
+                        <textarea id="edit-expense-description" rows="2"
+                            placeholder="Breve descripción del tipo de gasto" required
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
+                    </div>
+                    <div>
+                        <label for="edit-expense-fixed-amount"
+                            class="block text-sm font-medium text-white/80 mb-1">Monto
+                            Fijo (L) <span class="text-xs text-white/50">(opcional)</span></label>
+                        <input type="number" id="edit-expense-fixed-amount" placeholder="0.00"
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="edit-expense-recurring"
+                            class="h-5 w-5 bg-slate-700/50 border border-white/20 rounded focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        <label for="edit-expense-recurring" class="ml-2 text-sm font-medium text-white/80">Gasto
+                            recurrente
+                            mensual</label>
+                    </div>
+                    <div>
+                        <label for="edit-expense-color" class="block text-sm font-medium text-white/80 mb-2">Color del
+                            Tipo</label>
+                        <select id="edit-expense-color"
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            required>
+                            <option value="yellow">Amarillo</option>
+                            <option value="orange">Naranja</option>
+                            <option value="red">Rojo</option>
+                            <option value="sky">Azul Cielo</option>
+                            <option value="indigo">Índigo</option>
+                        </select>
+                    </div>
+                    <div class="pt-4 flex justify-end gap-4">
+                        <button type="button" id="cancel-edit-expense-category-btn"
+                            class="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-5 py-2.5 font-semibold">Cancelar</button>
+                        <button type="submit"
+                            class="bg-red-500 hover:bg-red-600 transition-colors rounded-lg px-5 py-2.5 font-bold">Guardar
+                            Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edición de Transacción -->
+    <div id="edit-transaction-modal"
+        class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 transition-all duration-300 ease-in-out modal-hidden z-50">
+        <div class="w-full max-w-md rounded-2xl bg-slate-800/80 backdrop-blur-xl shadow-2xl ring-1 ring-white/10">
+            <div class="p-6 flex justify-between items-center border-b border-white/10">
+                <h3 class="text-xl font-bold">Editar Transacción</h3>
+                <button id="close-edit-transaction-modal-btn" class="text-white/70 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <form id="edit-transaction-form" class="space-y-4">
+                    <input type="hidden" id="edit-transaction-id">
+                    <input type="hidden" id="edit-transaction-type">
+                    <div id="edit-transaction-income-fields">
+                        <div>
+                            <label for="edit-transaction-service"
+                                class="block text-sm font-medium text-white/80 mb-1">Servicio
+                                Realizado</label>
+                            <select id="edit-transaction-service" required
+                                class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                                <!-- Las opciones se cargarán dinámicamente desde localStorage -->
+                            </select>
+                        </div>
+                        <div class="mt-4">
+                            <label for="edit-transaction-employee"
+                                class="block text-sm font-medium text-white/80 mb-1">Empleada</label>
+                            <select id="edit-transaction-employee" required
+                                class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                                <!-- Las opciones se cargarán dinámicamente desde localStorage -->
+                            </select>
+                        </div>
+                    </div>
+                    <div id="edit-transaction-expense-fields">
+                        <div>
+                            <label for="edit-transaction-description"
+                                class="block text-sm font-medium text-white/80 mb-1">Descripción</label>
+                            <input type="text" id="edit-transaction-description"
+                                placeholder="Descripción de la transacción" required
+                                class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+                        <div class="mt-4">
+                            <label for="edit-transaction-category"
+                                class="block text-sm font-medium text-white/80 mb-1">Categoría</label>
+                            <select id="edit-transaction-category" required
+                                class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                                <!-- Las opciones se cargarán dinámicamente desde localStorage -->
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="edit-transaction-amount" class="block text-sm font-medium text-white/80 mb-1">Monto
+                            (L)</label>
+                        <input type="number" id="edit-transaction-amount" placeholder="0.00" required
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label for="edit-transaction-date"
+                            class="block text-sm font-medium text-white/80 mb-1">Fecha</label>
+                        <input type="date" id="edit-transaction-date" required
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div class="pt-4 flex justify-end gap-4">
+                        <button type="button" id="cancel-edit-transaction-btn"
+                            class="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-5 py-2.5 font-semibold">Cancelar</button>
+                        <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-600 transition-colors rounded-lg px-5 py-2.5 font-bold">Guardar
+                            Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Enlazando el archivo JavaScript con la funcionalidad de localStorage -->
     <script src="app.js"></script>
 </body>
