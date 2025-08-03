@@ -130,30 +130,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderTransactionHistory: function () {
             const transactions = DB.get('transactions').sort((a, b) => new Date(b.date) - new Date(a.date));
-            const container = document.querySelector('#finances table tbody');
+            const tableContainer = document.querySelector('#finances table');
             const employees = DB.get('employees');
             const incomeCategories = DB.get('incomeCategories');
+            const expenseCategories = DB.get('expenseCategories');
+
+            // Asegurarnos de que la tabla tenga la estructura adecuada
+            tableContainer.innerHTML = `
+                <thead>
+                    <tr class="border-b border-white/10 text-sm text-white/60">
+                        <th class="p-4 font-semibold">Fecha</th>
+                        <th class="p-4 font-semibold">Descripción</th>
+                        <th class="p-4 font-semibold">Categoría</th>
+                        <th class="p-4 font-semibold">Empleada</th>
+                        <th class="p-4 font-semibold text-right">Monto</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            `;
+
+            const container = tableContainer.querySelector('tbody');
 
             container.innerHTML = transactions.map(tx => {
                 const isIncome = tx.type === 'income';
                 let categoryName = 'N/A';
                 let categoryColor = 'gray';
+
                 if (isIncome) {
                     const cat = incomeCategories.find(c => c.id === tx.categoryId);
                     if (cat) {
-                        categoryName = cat.description;
-                        categoryColor = cat.color;
+                        categoryName = cat.description || cat.name;
+                        categoryColor = cat.color || 'blue';
                     }
                 } else {
-                    const cat = DB.get('expenseCategories').find(c => c.id === tx.categoryId);
+                    const cat = expenseCategories.find(c => c.id === tx.categoryId);
                     if (cat) {
-                        categoryName = cat.name;
-                        categoryColor = cat.color;
+                        categoryName = cat.description || cat.name;
+                        categoryColor = cat.color || 'red';
                     }
                 }
 
                 const employeeName = isIncome ? (employees.find(e => e.id === tx.employeeId)?.name || 'N/A') : 'N/A';
-                const date = new Date(tx.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+                const date = new Date(tx.date).toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                });
 
                 return `
                     <tr class="hover:bg-white/5 transition-colors">
@@ -167,12 +189,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     </tr>
                 `;
             }).join('');
+
+            // Si no hay transacciones, mostrar un mensaje
+            if (transactions.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-6 text-center text-white/50">No hay transacciones registradas</td>
+                    </tr>
+                `;
+            }
         },
 
         renderDashboard: function () {
             const transactions = DB.get('transactions');
             const today = new Date().toISOString().split('T')[0];
 
+            // Calcular ingresos y gastos del día
             const todayIncome = transactions
                 .filter(t => t.type === 'income' && t.date === today)
                 .reduce((sum, t) => sum + t.amount, 0);
@@ -181,9 +213,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 .filter(t => t.type === 'expense' && t.date === today)
                 .reduce((sum, t) => sum + t.amount, 0);
 
-            document.querySelector('#dashboard .text-4xl.font-bold.mt-2').textContent = `L ${todayIncome.toFixed(2)}`;
+            // Actualizar dashboard con los valores de hoy
+            document.querySelector('#dashboard .rounded-2xl:nth-child(2) .text-4xl.font-bold.mt-2').textContent = `L ${todayIncome.toFixed(2)}`;
             document.querySelector('#dashboard .rounded-2xl:nth-child(3) .text-4xl').textContent = `L ${todayExpense.toFixed(2)}`;
 
+            // Actualizar las transacciones recientes en el dashboard
             const recentTransactionsContainer = document.querySelector('#dashboard .lg\\:col-span-2.rounded-2xl .space-y-2');
             recentTransactionsContainer.innerHTML = transactions.slice(0, 3).map(tx => `
                  <div class="flex justify-between p-3 hover:bg-white/10 rounded-lg transition-colors">
@@ -193,6 +227,112 @@ document.addEventListener('DOMContentLoaded', () => {
                     </span>
                 </div>
             `).join('');
+
+            // Calcular y mostrar totales financieros para la sección de Finanzas
+            this.updateFinancialsData();
+        },
+
+        // Función para calcular y mostrar los totales financieros
+        updateFinancialsData: function () {
+            const transactions = DB.get('transactions');
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+
+            // Filtrar transacciones del mes actual
+            const monthTransactions = transactions.filter(tx => {
+                const txDate = new Date(tx.date);
+                return txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear;
+            });
+
+            // Calcular ingresos totales del mes
+            const monthlyIncome = monthTransactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            // Calcular gastos totales del mes
+            const monthlyExpense = monthTransactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            // Calcular ganancia neta
+            const netIncome = monthlyIncome - monthlyExpense;
+
+            // Actualizar la UI con estos datos
+            const totalIncomeElement = document.getElementById('total-income');
+            const totalExpenseElement = document.getElementById('total-expense');
+            const netIncomeElement = document.getElementById('net-income');
+
+            if (totalIncomeElement) totalIncomeElement.textContent = `L ${monthlyIncome.toFixed(2)}`;
+            if (totalExpenseElement) totalExpenseElement.textContent = `L ${monthlyExpense.toFixed(2)}`;
+            if (netIncomeElement) {
+                const textColor = netIncome >= 0 ? 'text-green-400' : 'text-red-400';
+                netIncomeElement.textContent = `L ${netIncome.toFixed(2)}`;
+                netIncomeElement.className = `text-3xl font-bold mt-2 ${textColor}`;
+            }
+
+            // Actualizar también los datos en la sección de reportes
+            const reportNetIncomeElement = document.querySelector('#reports .text-5xl.font-bold.mt-2.text-white');
+            if (reportNetIncomeElement) {
+                reportNetIncomeElement.textContent = `L ${netIncome.toFixed(2)}`;
+            }
+
+            // Actualizar gráficos con datos reales si es posible
+            this.updateCharts(monthTransactions);
+        },
+
+        updateCharts: function (monthTransactions) {
+            try {
+                // Organizar transacciones por semana
+                const weeks = { 1: [], 2: [], 3: [], 4: [], 5: [] };
+
+                monthTransactions.forEach(tx => {
+                    const date = new Date(tx.date);
+                    // Calcular en qué semana del mes cae
+                    const day = date.getDate();
+                    const weekOfMonth = Math.ceil(day / 7);
+                    if (weeks[weekOfMonth]) {
+                        weeks[weekOfMonth].push(tx);
+                    }
+                });
+
+                // Calcular ingresos y gastos por semana
+                const weeklyData = {
+                    income: [],
+                    expense: []
+                };
+
+                for (let i = 1; i <= 4; i++) {
+                    const weekTx = weeks[i] || [];
+                    const weekIncome = weekTx
+                        .filter(t => t.type === 'income')
+                        .reduce((sum, t) => sum + t.amount, 0);
+                    const weekExpense = weekTx
+                        .filter(t => t.type === 'expense')
+                        .reduce((sum, t) => sum + t.amount, 0);
+
+                    weeklyData.income.push(weekIncome);
+                    weeklyData.expense.push(weekExpense);
+                }
+
+                // Intentar actualizar el gráfico del dashboard si existe una instancia
+                const monthlyChart = Chart.instances[0];
+                if (monthlyChart) {
+                    monthlyChart.data.datasets[0].data = weeklyData.income;
+                    monthlyChart.data.datasets[1].data = weeklyData.expense;
+                    monthlyChart.update();
+                }
+
+                // Intentar actualizar el gráfico de reportes si existe
+                const reportsChart = Chart.instances[1];
+                if (reportsChart) {
+                    reportsChart.data.datasets[0].data = weeklyData.income;
+                    reportsChart.data.datasets[1].data = weeklyData.expense;
+                    reportsChart.update();
+                }
+            } catch (e) {
+                console.error("Error al actualizar gráficos:", e);
+            }
         },
 
         populateSelects: function () {
@@ -219,17 +359,54 @@ document.addEventListener('DOMContentLoaded', () => {
             this.setupForms();
             UI.renderAll();
             this.setupCharts();
+            // Intentar restaurar la página en la que estaba el usuario
+            this.restorePageState();
+        },
+
+        // Función para guardar y restaurar el estado de navegación
+        savePageState: function (pageId) {
+            localStorage.setItem('currentPage', pageId);
+        },
+
+        restorePageState: function () {
+            const savedPage = localStorage.getItem('currentPage');
+            if (savedPage) {
+                const pages = document.querySelectorAll('.page-content');
+                const navLinks = document.querySelectorAll('.nav-link');
+
+                // Ocultar todas las páginas
+                pages.forEach(page => page.classList.add('hidden'));
+
+                // Mostrar la página guardada
+                const activePage = document.getElementById(savedPage);
+                if (activePage) activePage.classList.remove('hidden');
+
+                // Actualizar la navegación
+                navLinks.forEach(navLink => {
+                    navLink.classList.remove('bg-pink-500/20');
+                    navLink.classList.add('hover:bg-white/10');
+
+                    const pageId = navLink.getAttribute('href').substring(1);
+                    if (pageId === savedPage) {
+                        navLink.classList.add('bg-pink-500/20');
+                        navLink.classList.remove('hover:bg-white/10');
+                    }
+                });
+            }
         },
 
         setupNavigation: function () {
             const navLinks = document.querySelectorAll('.nav-link');
             const pages = document.querySelectorAll('.page-content');
 
-            function showPage(pageId) {
+            const showPage = (pageId) => {
                 pages.forEach(page => page.classList.add('hidden'));
                 const activePage = document.getElementById(pageId);
                 if (activePage) activePage.classList.remove('hidden');
-            }
+
+                // Guardar el estado de la página en localStorage
+                this.savePageState(pageId);
+            };
 
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
@@ -247,7 +424,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            showPage('dashboard');
+            // Si no hay página guardada, mostrar el dashboard
+            if (!localStorage.getItem('currentPage')) {
+                showPage('dashboard');
+            }
         },
 
         setupModals: function () {
@@ -280,40 +460,144 @@ document.addEventListener('DOMContentLoaded', () => {
                     UI.populateSelects();
                     document.getElementById('employee-modal').classList.add('modal-hidden');
                     e.target.reset();
+
+                    // Mantenernos en la sección de configuración
+                    const settingsPage = document.getElementById('settings');
+                    if (settingsPage && settingsPage.classList.contains('hidden')) {
+                        const pages = document.querySelectorAll('.page-content');
+                        pages.forEach(page => page.classList.add('hidden'));
+                        settingsPage.classList.remove('hidden');
+                    }
+                }
+            });
+
+            // Add Income Category (Service)
+            document.querySelector('#income-category-modal form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('income-category-name').value;
+                const price = parseFloat(document.getElementById('service-price').value);
+                const description = document.getElementById('service-description').value;
+                const color = document.getElementById('service-color').value;
+
+                if (name && price && description && color) {
+                    DB.add('incomeCategories', {
+                        name,
+                        price,
+                        description,
+                        color
+                    });
+                    UI.renderIncomeCategories();
+                    UI.populateSelects();
+                    document.getElementById('income-category-modal').classList.add('modal-hidden');
+                    e.target.reset();
+
+                    // Mantenernos en la sección de configuración
+                    const settingsPage = document.getElementById('settings');
+                    if (settingsPage && settingsPage.classList.contains('hidden')) {
+                        const pages = document.querySelectorAll('.page-content');
+                        pages.forEach(page => page.classList.add('hidden'));
+                        settingsPage.classList.remove('hidden');
+                    }
+                }
+            });
+
+            // Add Expense Category
+            document.querySelector('#expense-category-modal form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('expense-category-name').value;
+                const description = document.getElementById('expense-description').value;
+                const amount = document.getElementById('expense-fixed-amount').value
+                    ? parseFloat(document.getElementById('expense-fixed-amount').value)
+                    : null;
+                const recurring = document.getElementById('expense-recurring').checked;
+                const color = document.getElementById('expense-color').value;
+
+                if (name && description && color) {
+                    DB.add('expenseCategories', {
+                        name,
+                        description,
+                        amount,
+                        recurring,
+                        color
+                    });
+                    UI.renderExpenseCategories();
+                    UI.populateSelects();
+                    document.getElementById('expense-category-modal').classList.add('modal-hidden');
+                    e.target.reset();
+
+                    // Mantenernos en la sección de configuración
+                    const settingsPage = document.getElementById('settings');
+                    if (settingsPage && settingsPage.classList.contains('hidden')) {
+                        const pages = document.querySelectorAll('.page-content');
+                        pages.forEach(page => page.classList.add('hidden'));
+                        settingsPage.classList.remove('hidden');
+                    }
                 }
             });
 
             // Add Sale
             document.querySelector('#sale-modal form').addEventListener('submit', e => {
                 e.preventDefault();
+
+                // Guardar la página actual antes de procesar el formulario
+                const currentPage = localStorage.getItem('currentPage') || 'daily-log';
+
+                const serviceSelect = document.getElementById('sale-service');
+                // Verificar si el valor seleccionado es válido
+                const categoryId = serviceSelect.value !== 'other' ?
+                    parseInt(serviceSelect.value) : null;
+
                 const newSale = {
                     type: 'income',
-                    description: document.getElementById('sale-service').options[document.getElementById('sale-service').selectedIndex].text,
+                    description: serviceSelect.options[serviceSelect.selectedIndex].text,
                     amount: parseFloat(document.getElementById('sale-amount').value),
-                    categoryId: parseInt(document.getElementById('sale-service').value),
+                    categoryId: categoryId,
                     employeeId: parseInt(document.getElementById('sale-employee').value),
                     date: new Date().toISOString().split('T')[0]
                 };
+
                 DB.add('transactions', newSale);
                 UI.renderAll();
                 document.getElementById('sale-modal').classList.add('modal-hidden');
                 e.target.reset();
+
+                // Restaurar a la página en la que estaba el usuario
+                this.restorePageState();
+
+                // Mostrar una notificación de éxito
+                alert('Venta registrada con éxito');
             });
 
             // Add Expense
             document.querySelector('#expense-modal form').addEventListener('submit', e => {
                 e.preventDefault();
+
+                // Guardar la página actual antes de procesar el formulario
+                const currentPage = localStorage.getItem('currentPage') || 'daily-log';
+
+                const expenseCategorySelect = document.getElementById('expense-category');
+                // Verificar si el valor seleccionado es válido
+                const categoryId = expenseCategorySelect.value !== 'other' ?
+                    parseInt(expenseCategorySelect.value) : null;
+
                 const newExpense = {
                     type: 'expense',
                     description: document.getElementById('expense-description').value,
                     amount: parseFloat(document.getElementById('expense-amount').value),
-                    categoryId: parseInt(document.getElementById('expense-category').value),
+                    categoryId: categoryId,
                     date: new Date().toISOString().split('T')[0]
                 };
+
                 DB.add('transactions', newExpense);
                 UI.renderAll();
                 document.getElementById('expense-modal').classList.add('modal-hidden');
                 e.target.reset();
+
+                // Restaurar a la página en la que estaba el usuario
+                this.restorePageState();
+
+                // Mostrar una notificación de éxito
+                alert('Gasto registrado con éxito');
             });
         },
 
