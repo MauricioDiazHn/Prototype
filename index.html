@@ -124,28 +124,17 @@
                     </div>
                     <div class="rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10">
                         <h4 class="text-sm font-semibold text-white/70">Ingresos de Hoy</h4>
-                        <p class="text-4xl font-bold mt-2">L 2,800</p>
+                        <p class="text-4xl font-bold mt-2">L 0.00</p>
                     </div>
                     <div class="rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10">
                         <h4 class="text-sm font-semibold text-white/70">Gastos de Hoy</h4>
-                        <p class="text-4xl font-bold mt-2">L 450</p>
+                        <p class="text-4xl font-bold mt-2">L 0.00</p>
                     </div>
                     <div
                         class="lg:col-span-2 rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10">
                         <h3 class="text-xl font-bold mb-4">Últimas Transacciones</h3>
                         <div class="space-y-2">
-                            <div class="flex justify-between p-3 hover:bg-white/10 rounded-lg transition-colors">
-                                <span>Tinte Completo</span>
-                                <span class="text-green-400">+ L 1,500.00</span>
-                            </div>
-                            <div class="flex justify-between p-3 hover:bg-white/10 rounded-lg transition-colors">
-                                <span>Pago de Alquiler</span>
-                                <span class="text-red-400">- L 8,000.00</span>
-                            </div>
-                            <div class="flex justify-between p-3 hover:bg-white/10 rounded-lg transition-colors">
-                                <span>Uñas Acrílicas</span>
-                                <span class="text-green-400">+ L 800.00</span>
-                            </div>
+                            <!-- Las transacciones recientes se cargarán desde localStorage -->
                         </div>
                     </div>
                 </div>
@@ -194,15 +183,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div class="rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10">
                         <h4 class="text-sm font-semibold text-white/70">Ingresos Totales (Mes)</h4>
-                        <p class="text-3xl font-bold mt-2 text-green-400">L 45,700</p>
+                        <p id="total-income" class="text-3xl font-bold mt-2 text-green-400">L 0.00</p>
                     </div>
                     <div class="rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg ring-1 ring-white/10">
                         <h4 class="text-sm font-semibold text-white/70">Egresos Totales (Mes)</h4>
-                        <p class="text-3xl font-bold mt-2 text-red-400">L 12,350</p>
+                        <p id="total-expense" class="text-3xl font-bold mt-2 text-red-400">L 0.00</p>
                     </div>
                     <div class="rounded-2xl bg-pink-500/20 backdrop-blur-md p-6 shadow-lg ring-1 ring-pink-400">
                         <h4 class="text-sm font-semibold text-white/70">Ganancia Neta (Mes)</h4>
-                        <p class="text-3xl font-bold mt-2 text-white">L 33,350</p>
+                        <p id="net-income" class="text-3xl font-bold mt-2 text-white">L 0.00</p>
                     </div>
                 </div>
                 <div class="rounded-2xl bg-white/10 backdrop-blur-md shadow-lg ring-1 ring-white/10">
@@ -221,51 +210,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="hover:bg-white/5 transition-colors">
-                                    <td class="p-4">02 Ago, 2025</td>
-                                    <td class="p-4">Uñas Acrílicas + Diseño</td>
-                                    <td class="p-4"><span
-                                            class="bg-blue-500/20 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">Servicio
-                                            Uñas</span></td>
-                                    <td class="p-4">Ana</td>
-                                    <td class="p-4 text-right font-semibold text-green-400">+ L 800</td>
-                                </tr>
-                                <tr class="hover:bg-white/5 transition-colors">
-                                    <td class="p-4">01 Ago, 2025</td>
-                                    <td class="p-4">Pago de Alquiler del Local</td>
-                                    <td class="p-4"><span
-                                            class="bg-yellow-500/20 text-yellow-300 text-xs font-semibold px-2.5 py-1 rounded-full">Renta</span>
-                                    </td>
-                                    <td class="p-4 text-white/50">N/A</td>
-                                    <td class="p-4 text-right font-semibold text-red-400">- L 8,000</td>
-                                </tr>
-                                <tr class="hover:bg-white/5 transition-colors">
-                                    <td class="p-4">01 Ago, 2025</td>
-                                    <td class="p-4">Tinte Completo y Corte</td>
-                                    <td class="p-4"><span
-                                            class="bg-purple-500/20 text-purple-300 text-xs font-semibold px-2.5 py-1 rounded-full">Servicio
-                                            Cabello</span></td>
-                                    <td class="p-4">Maria</td>
-                                    <td class="p-4 text-right font-semibold text-green-400">+ L 1,500</td>
-                                </tr>
-                                <tr class="hover:bg-white/5 transition-colors">
-                                    <td class="p-4">31 Jul, 2025</td>
-                                    <td class="p-4">Compra de Esmaltes y Acetona</td>
-                                    <td class="p-4"><span
-                                            class="bg-orange-500/20 text-orange-300 text-xs font-semibold px-2.5 py-1 rounded-full">Suministros</span>
-                                    </td>
-                                    <td class="p-4 text-white/50">N/A</td>
-                                    <td class="p-4 text-right font-semibold text-red-400">- L 1,200</td>
-                                </tr>
-                                <tr class="hover:bg-white/5 transition-colors">
-                                    <td class="p-4">31 Jul, 2025</td>
-                                    <td class="p-4">Manicura Clásica</td>
-                                    <td class="p-4"><span
-                                            class="bg-blue-500/20 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">Servicio
-                                            Uñas</span></td>
-                                    <td class="p-4">Sofia</td>
-                                    <td class="p-4 text-right font-semibold text-green-400">+ L 500</td>
-                                </tr>
+                                <!-- La tabla de transacciones se carga dinámicamente desde localStorage -->
                             </tbody>
                         </table>
                     </div>
@@ -732,24 +677,20 @@
                 <form class="space-y-4">
                     <div><label for="expense-description"
                             class="block text-sm font-medium text-white/80 mb-1">Descripción del Gasto</label><input
-                            type="text" id="expense-description" placeholder="Ej: Pago de luz, compra de café"
+                            type="text" id="expense-description" placeholder="Ej: Pago de luz, compra de café" required
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
                     </div>
                     <div><label for="expense-amount" class="block text-sm font-medium text-white/80 mb-1">Monto
-                            (L)</label><input type="number" id="expense-amount" placeholder="0.00"
+                            (L)</label><input type="number" id="expense-amount" placeholder="0.00" required
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
                     </div>
                     <div><label for="expense-category"
-                            class="block text-sm font-medium text-white/80 mb-1">Categoría</label><select
-                            id="expense-category"
+                            class="block text-sm font-medium text-white/80 mb-1">Categoría</label>
+                        <select id="expense-category"
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
-                            <option>Renta</option>
-                            <option>Suministros</option>
-                            <option>Salarios</option>
-                            <option>Servicios Públicos (luz, agua)</option>
-                            <option>Marketing</option>
-                            <option>Otro</option>
-                        </select></div>
+                            <!-- Las opciones se cargarán dinámicamente desde localStorage -->
+                        </select>
+                    </div>
                     <div class="pt-4 flex justify-end gap-4"><button type="button" id="cancel-expense-btn"
                             class="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-5 py-2.5 font-semibold">Cancelar</button><button
                             type="submit"
@@ -774,26 +715,23 @@
             <div class="p-6">
                 <form class="space-y-4">
                     <div><label for="sale-service" class="block text-sm font-medium text-white/80 mb-1">Servicio
-                            Realizado</label><select id="sale-service"
+                            Realizado</label>
+                        <select id="sale-service" required
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
-                            <option>Manicura Clásica</option>
-                            <option>Uñas Acrílicas</option>
-                            <option>Corte de Cabello</option>
-                            <option>Tinte Completo</option>
-                            <option>Otro</option>
-                        </select></div>
+                            <!-- Las opciones se cargarán dinámicamente desde localStorage -->
+                        </select>
+                    </div>
                     <div><label for="sale-amount" class="block text-sm font-medium text-white/80 mb-1">Monto
-                            (L)</label><input type="number" id="sale-amount" placeholder="0.00"
+                            (L)</label><input type="number" id="sale-amount" placeholder="0.00" required
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
                     </div>
                     <div><label for="sale-employee"
-                            class="block text-sm font-medium text-white/80 mb-1">Empleada</label><select
-                            id="sale-employee"
+                            class="block text-sm font-medium text-white/80 mb-1">Empleada</label>
+                        <select id="sale-employee" required
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
-                            <option>Ana</option>
-                            <option>Maria</option>
-                            <option>Sofia</option>
-                        </select></div>
+                            <!-- Las opciones se cargarán dinámicamente desde localStorage -->
+                        </select>
+                    </div>
                     <div class="pt-4 flex justify-end gap-4"><button type="button" id="cancel-sale-btn"
                             class="bg-white/10 hover:bg-white/20 transition-colors rounded-lg px-5 py-2.5 font-semibold">Cancelar</button><button
                             type="submit"
@@ -822,19 +760,14 @@
                     <div>
                         <label for="employee-name" class="block text-sm font-medium text-white/80 mb-1">Nombre
                             Completo</label>
-                        <input type="text" id="employee-name" placeholder="Nombre y Apellido"
+                        <input type="text" id="employee-name" placeholder="Nombre y Apellido" required
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
                     </div>
                     <div>
                         <label for="employee-position"
                             class="block text-sm font-medium text-white/80 mb-1">Especialidad</label>
                         <input type="text" id="employee-position" placeholder="Ej: Estilista, Manicurista, etc."
-                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
-                    </div>
-                    <div>
-                        <label for="employee-phone" class="block text-sm font-medium text-white/80 mb-1">Teléfono
-                            (opcional)</label>
-                        <input type="tel" id="employee-phone" placeholder="Número de teléfono"
+                            required
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
                     </div>
                     <div class="pt-4 flex justify-end gap-4">
@@ -867,32 +800,34 @@
                     <div>
                         <label for="income-category-name" class="block text-sm font-medium text-white/80 mb-1">Nombre
                             del Servicio</label>
-                        <input type="text" id="income-category-name" placeholder="Ej: Manicura Clásica"
+                        <input type="text" id="income-category-name" placeholder="Ej: Manicura Clásica" required
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
                     </div>
                     <div>
                         <label for="service-price" class="block text-sm font-medium text-white/80 mb-1">Precio
-                            Predeterminado (L) <span class="text-xs text-white/50">(opcional)</span></label>
-                        <input type="number" id="service-price" placeholder="0.00"
+                            Predeterminado (L)</label>
+                        <input type="number" id="service-price" placeholder="0.00" required
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
                     </div>
                     <div>
                         <label for="service-description"
-                            class="block text-sm font-medium text-white/80 mb-1">Descripción <span
-                                class="text-xs text-white/50">(opcional)</span></label>
+                            class="block text-sm font-medium text-white/80 mb-1">Descripción</label>
                         <textarea id="service-description" rows="2" placeholder="Breve descripción del servicio"
+                            required
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-white/80 mb-2">Color de la Categoría</label>
-                        <div class="grid grid-cols-5 gap-2">
-                            <button type="button"
-                                class="h-8 w-8 rounded-full bg-blue-500 ring-2 ring-offset-2 ring-offset-slate-800 ring-blue-500"></button>
-                            <button type="button" class="h-8 w-8 rounded-full bg-purple-500"></button>
-                            <button type="button" class="h-8 w-8 rounded-full bg-pink-500"></button>
-                            <button type="button" class="h-8 w-8 rounded-full bg-green-500"></button>
-                            <button type="button" class="h-8 w-8 rounded-full bg-amber-500"></button>
-                        </div>
+                        <label for="service-color" class="block text-sm font-medium text-white/80 mb-2">Color de la
+                            Categoría</label>
+                        <select id="service-color"
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            required>
+                            <option value="blue">Azul</option>
+                            <option value="purple">Morado</option>
+                            <option value="pink">Rosa</option>
+                            <option value="green">Verde</option>
+                            <option value="amber">Ámbar</option>
+                        </select>
                     </div>
                     <div class="pt-4 flex justify-end gap-4">
                         <button type="button" id="cancel-income-category-btn"
@@ -924,14 +859,14 @@
                     <div>
                         <label for="expense-category-name" class="block text-sm font-medium text-white/80 mb-1">Nombre
                             del Gasto</label>
-                        <input type="text" id="expense-category-name" placeholder="Ej: Renta del Local"
+                        <input type="text" id="expense-category-name" placeholder="Ej: Renta del Local" required
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500">
                     </div>
                     <div>
                         <label for="expense-description"
-                            class="block text-sm font-medium text-white/80 mb-1">Descripción <span
-                                class="text-xs text-white/50">(opcional)</span></label>
+                            class="block text-sm font-medium text-white/80 mb-1">Descripción</label>
                         <textarea id="expense-description" rows="2" placeholder="Breve descripción del tipo de gasto"
+                            required
                             class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
                     </div>
                     <div>
@@ -947,15 +882,17 @@
                             mensual</label>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-white/80 mb-2">Color del Tipo</label>
-                        <div class="grid grid-cols-5 gap-2">
-                            <button type="button"
-                                class="h-8 w-8 rounded-full bg-yellow-500 ring-2 ring-offset-2 ring-offset-slate-800 ring-yellow-500"></button>
-                            <button type="button" class="h-8 w-8 rounded-full bg-orange-500"></button>
-                            <button type="button" class="h-8 w-8 rounded-full bg-red-500"></button>
-                            <button type="button" class="h-8 w-8 rounded-full bg-sky-500"></button>
-                            <button type="button" class="h-8 w-8 rounded-full bg-indigo-500"></button>
-                        </div>
+                        <label for="expense-color" class="block text-sm font-medium text-white/80 mb-2">Color del
+                            Tipo</label>
+                        <select id="expense-color"
+                            class="w-full bg-slate-700/50 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            required>
+                            <option value="yellow">Amarillo</option>
+                            <option value="orange">Naranja</option>
+                            <option value="red">Rojo</option>
+                            <option value="sky">Azul Cielo</option>
+                            <option value="indigo">Índigo</option>
+                        </select>
                     </div>
                     <div class="pt-4 flex justify-end gap-4">
                         <button type="button" id="cancel-expense-category-btn"
@@ -969,168 +906,8 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- LÓGICA DE NAVEGACIÓN ---
-            const navLinks = document.querySelectorAll('.nav-link');
-            const pages = document.querySelectorAll('.page-content');
-
-            function showPage(pageId) {
-                pages.forEach(page => page.classList.add('hidden'));
-                const activePage = document.getElementById(pageId);
-                if (activePage) activePage.classList.remove('hidden');
-            }
-
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const pageId = link.getAttribute('href').substring(1);
-
-                    navLinks.forEach(navLink => {
-                        navLink.classList.remove('bg-pink-500/20');
-                        navLink.classList.add('hover:bg-white/10');
-                    });
-                    link.classList.add('bg-pink-500/20');
-                    link.classList.remove('hover:bg-white/10');
-
-                    showPage(pageId);
-                });
-            });
-
-            showPage('dashboard');
-
-            // --- LÓGICA PARA MODALES ---
-            const saleModal = document.getElementById('sale-modal');
-            const expenseModal = document.getElementById('expense-modal');
-            const employeeModal = document.getElementById('employee-modal');
-            const incomeCategoryModal = document.getElementById('income-category-modal');
-            const expenseCategoryModal = document.getElementById('expense-category-modal');
-
-            // Botones para abrir modales principales
-            document.getElementById('trigger-sale-modal').addEventListener('click', () => saleModal.classList.remove('modal-hidden'));
-            document.getElementById('trigger-expense-modal').addEventListener('click', () => expenseModal.classList.remove('modal-hidden'));
-
-            // Botones para cerrar modales principales
-            document.getElementById('close-sale-modal-btn').addEventListener('click', () => saleModal.classList.add('modal-hidden'));
-            document.getElementById('cancel-sale-btn').addEventListener('click', () => saleModal.classList.add('modal-hidden'));
-
-            document.getElementById('close-expense-modal-btn').addEventListener('click', () => expenseModal.classList.add('modal-hidden'));
-            document.getElementById('cancel-expense-btn').addEventListener('click', () => expenseModal.classList.add('modal-hidden'));
-
-            // Botones para modales de configuración
-            document.getElementById('add-employee-btn').addEventListener('click', () => employeeModal.classList.remove('modal-hidden'));
-            document.getElementById('close-employee-modal-btn').addEventListener('click', () => employeeModal.classList.add('modal-hidden'));
-            document.getElementById('cancel-employee-btn').addEventListener('click', () => employeeModal.classList.add('modal-hidden'));
-
-            document.getElementById('add-income-category-btn').addEventListener('click', () => incomeCategoryModal.classList.remove('modal-hidden'));
-            document.getElementById('close-income-category-modal-btn').addEventListener('click', () => incomeCategoryModal.classList.add('modal-hidden'));
-            document.getElementById('cancel-income-category-btn').addEventListener('click', () => incomeCategoryModal.classList.add('modal-hidden'));
-
-            document.getElementById('add-expense-category-btn').addEventListener('click', () => expenseCategoryModal.classList.remove('modal-hidden'));
-            document.getElementById('close-expense-category-modal-btn').addEventListener('click', () => expenseCategoryModal.classList.add('modal-hidden'));
-            document.getElementById('cancel-expense-category-btn').addEventListener('click', () => expenseCategoryModal.classList.add('modal-hidden'));
-            // --- LÓGICA PARA EL GRÁFICO DEL DASHBOARD ---
-            const monthlyChartCtx = document.getElementById('monthlyChart');
-            if (monthlyChartCtx) {
-                new Chart(monthlyChartCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
-                        datasets: [{
-                            label: 'Ingresos',
-                            data: [1500, 200, 300, 400],
-                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                            borderColor: 'rgb(16, 185, 129)',
-                            tension: 0.4,
-                            fill: true,
-                        }, {
-                            label: 'Egresos',
-                            data: [0, 0, 0, 0],
-                            backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                            borderColor: 'rgb(239, 68, 68)',
-                            tension: 0.4,
-                            fill: true,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false,
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
-                                    color: 'rgba(255, 255, 255, 0.7)'
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
-                                    color: 'rgba(255, 255, 255, 0.7)'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // --- LÓGICA PARA EL GRÁFICO DE REPORTES ---
-            try {
-                const ctx = document.getElementById('gananciasChart').getContext('2d');
-                const gradientIngresos = ctx.createLinearGradient(0, 0, 0, 300);
-                gradientIngresos.addColorStop(0, 'rgba(74, 222, 128, 0.6)');
-                gradientIngresos.addColorStop(1, 'rgba(74, 222, 128, 0)');
-
-                const gradientEgresos = ctx.createLinearGradient(0, 0, 0, 300);
-                gradientEgresos.addColorStop(0, 'rgba(248, 113, 113, 0.6)');
-                gradientEgresos.addColorStop(1, 'rgba(248, 113, 113, 0)');
-
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
-                        datasets: [{
-                            label: 'Ingresos',
-                            data: [10200, 12500, 11800, 11200],
-                            backgroundColor: gradientIngresos,
-                            borderColor: '#4ade80',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4
-                        }, {
-                            label: 'Egresos',
-                            data: [3000, 3500, 2850, 3000],
-                            backgroundColor: gradientEgresos,
-                            borderColor: '#f87171',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { labels: { color: '#cbd5e1' } } },
-                        scales: {
-                            y: { beginAtZero: true, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
-                            x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
-                        }
-                    }
-                });
-            } catch (e) {
-                console.error("Error al inicializar el gráfico:", e);
-            }
-        });
-    </script>
+    <!-- Enlazando el archivo JavaScript con la funcionalidad de localStorage -->
+    <script src="app.js"></script>
 </body>
 
 </html>
