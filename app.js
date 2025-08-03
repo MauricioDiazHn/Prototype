@@ -290,7 +290,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Actualizar las transacciones recientes en el dashboard
             const recentTransactionsContainer = document.querySelector('#dashboard .lg\\:col-span-2.rounded-2xl .space-y-2');
-            recentTransactionsContainer.innerHTML = transactions.slice(0, 3).map(tx => `
+            // Ordenar transacciones por fecha (más recientes primero)
+            const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+            recentTransactionsContainer.innerHTML = sortedTransactions.slice(0, 3).map(tx => `
                  <div class="flex justify-between p-3 hover:bg-white/10 rounded-lg transition-colors">
                     <span>${tx.description}</span>
                     <span class="${tx.type === 'income' ? 'text-green-400' : 'text-red-400'}">
@@ -348,58 +350,112 @@ document.addEventListener('DOMContentLoaded', () => {
                 reportNetIncomeElement.textContent = `L ${netIncome.toFixed(2)}`;
             }
 
+            // Actualizar el gráfico de gastos por categoría
+            this.updateExpenseCategoriesChart();
+
             // Actualizar gráficos con datos reales si es posible
             this.updateCharts(monthTransactions);
+        },
+
+        // Variables para mantener referencias a los gráficos
+        monthlyChart: null,
+        reportsChart: null,
+
+        // Función para actualizar el gráfico de gastos por categoría
+        updateExpenseCategoriesChart: function () {
+            const expenseCategoriesContainer = document.getElementById('expense-categories-chart');
+            if (!expenseCategoriesContainer) return;
+
+            // Obtener categorías de gastos y transacciones
+            const expenseCategories = DB.get('expenseCategories');
+            const transactions = DB.get('transactions');
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+
+            // Filtrar transacciones del mes actual que sean gastos
+            const monthExpenses = transactions.filter(tx => {
+                const txDate = new Date(tx.date);
+                return tx.type === 'expense' &&
+                    txDate.getMonth() === currentMonth &&
+                    txDate.getFullYear() === currentYear;
+            });
+
+            // Calcular el total de gastos del mes
+            const totalExpenses = monthExpenses.reduce((sum, tx) => sum + tx.amount, 0);
+
+            // Calcular gastos por categoría
+            const expensesByCategory = {};
+            monthExpenses.forEach(expense => {
+                const categoryId = expense.categoryId;
+                if (categoryId) {
+                    if (!expensesByCategory[categoryId]) {
+                        expensesByCategory[categoryId] = 0;
+                    }
+                    expensesByCategory[categoryId] += expense.amount;
+                }
+            });
+
+            // Generar HTML para cada categoría
+            let html = '';
+            expenseCategories.forEach(category => {
+                const amount = expensesByCategory[category.id] || 0;
+                const percentage = totalExpenses > 0 ? (amount / totalExpenses) * 100 : 0;
+
+                html += `
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>${category.name}</span>
+                        <span>L ${amount.toFixed(2)}</span>
+                    </div>
+                    <div class="w-full bg-slate-700 rounded-full h-2.5">
+                        <div class="bg-${category.color}-400 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                    </div>
+                </div>`;
+            });
+
+            // Si no hay categorías de gastos, mostrar mensaje
+            if (expenseCategories.length === 0) {
+                html = '<p class="text-center text-white/60">No hay categorías de gastos definidas</p>';
+            }
+
+            // Actualizar el contenedor
+            expenseCategoriesContainer.innerHTML = html;
         },
 
         updateCharts: function (monthTransactions) {
             try {
                 // Organizar transacciones por semana
-                const weeks = { 1: [], 2: [], 3: [], 4: [], 5: [] };
-
-                monthTransactions.forEach(tx => {
-                    const date = new Date(tx.date);
-                    // Calcular en qué semana del mes cae
-                    const day = date.getDate();
-                    const weekOfMonth = Math.ceil(day / 7);
-                    if (weeks[weekOfMonth]) {
-                        weeks[weekOfMonth].push(tx);
-                    }
-                });
+                const weeks = [
+                    monthTransactions.filter(tx => new Date(tx.date).getDate() <= 7),
+                    monthTransactions.filter(tx => new Date(tx.date).getDate() > 7 && new Date(tx.date).getDate() <= 14),
+                    monthTransactions.filter(tx => new Date(tx.date).getDate() > 14 && new Date(tx.date).getDate() <= 21),
+                    monthTransactions.filter(tx => new Date(tx.date).getDate() > 21)
+                ];
 
                 // Calcular ingresos y gastos por semana
-                const weeklyData = {
-                    income: [],
-                    expense: []
-                };
+                const weeklyIncomes = weeks.map(week =>
+                    week.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0)
+                );
 
-                for (let i = 1; i <= 4; i++) {
-                    const weekTx = weeks[i] || [];
-                    const weekIncome = weekTx
-                        .filter(t => t.type === 'income')
-                        .reduce((sum, t) => sum + t.amount, 0);
-                    const weekExpense = weekTx
-                        .filter(t => t.type === 'expense')
-                        .reduce((sum, t) => sum + t.amount, 0);
+                const weeklyExpenses = weeks.map(week =>
+                    week.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0)
+                );
 
-                    weeklyData.income.push(weekIncome);
-                    weeklyData.expense.push(weekExpense);
+                // Actualizar el gráfico del dashboard si existe
+                const monthlyChartCtx = document.getElementById('monthlyChart');
+                if (monthlyChartCtx && monthlyChartCtx.chart) {
+                    monthlyChartCtx.chart.data.datasets[0].data = weeklyIncomes;
+                    monthlyChartCtx.chart.data.datasets[1].data = weeklyExpenses;
+                    monthlyChartCtx.chart.update();
                 }
 
-                // Intentar actualizar el gráfico del dashboard si existe una instancia
-                const monthlyChart = Chart.instances[0];
-                if (monthlyChart) {
-                    monthlyChart.data.datasets[0].data = weeklyData.income;
-                    monthlyChart.data.datasets[1].data = weeklyData.expense;
-                    monthlyChart.update();
-                }
-
-                // Intentar actualizar el gráfico de reportes si existe
-                const reportsChart = Chart.instances[1];
-                if (reportsChart) {
-                    reportsChart.data.datasets[0].data = weeklyData.income;
-                    reportsChart.data.datasets[1].data = weeklyData.expense;
-                    reportsChart.update();
+                // Actualizar el gráfico de reportes si existe
+                const reportsChartCtx = document.getElementById('gananciasChart');
+                if (reportsChartCtx && reportsChartCtx.chart) {
+                    reportsChartCtx.chart.data.datasets[0].data = weeklyIncomes;
+                    reportsChartCtx.chart.data.datasets[1].data = weeklyExpenses;
+                    reportsChartCtx.chart.update();
                 }
             } catch (e) {
                 console.error("Error al actualizar gráficos:", e);
@@ -967,20 +1023,50 @@ document.addEventListener('DOMContentLoaded', () => {
             // Dashboard Chart
             const monthlyChartCtx = document.getElementById('monthlyChart');
             if (monthlyChartCtx) {
-                new Chart(monthlyChartCtx, {
+                // Obtener datos reales de transacciones
+                const transactions = DB.get('transactions');
+                const currentDate = new Date();
+                const currentMonth = currentDate.getMonth();
+                const currentYear = currentDate.getFullYear();
+
+                // Filtrar transacciones del mes actual
+                const monthTransactions = transactions.filter(tx => {
+                    const txDate = new Date(tx.date);
+                    return txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear;
+                });
+
+                // Dividir el mes en semanas
+                const weeks = [
+                    monthTransactions.filter(tx => new Date(tx.date).getDate() <= 7),
+                    monthTransactions.filter(tx => new Date(tx.date).getDate() > 7 && new Date(tx.date).getDate() <= 14),
+                    monthTransactions.filter(tx => new Date(tx.date).getDate() > 14 && new Date(tx.date).getDate() <= 21),
+                    monthTransactions.filter(tx => new Date(tx.date).getDate() > 21)
+                ];
+
+                // Calcular ingresos y gastos por semana
+                const weeklyIncomes = weeks.map(week =>
+                    week.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0)
+                );
+
+                const weeklyExpenses = weeks.map(week =>
+                    week.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0)
+                );
+
+                // Almacenar la referencia del gráfico en el elemento canvas
+                monthlyChartCtx.chart = new Chart(monthlyChartCtx, {
                     type: 'line',
                     data: {
                         labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
                         datasets: [{
                             label: 'Ingresos',
-                            data: [15000, 12000, 18000, 14000],
+                            data: weeklyIncomes,
                             backgroundColor: 'rgba(16, 185, 129, 0.2)',
                             borderColor: 'rgb(16, 185, 129)',
                             tension: 0.4,
                             fill: true,
                         }, {
                             label: 'Egresos',
-                            data: [5000, 6000, 4500, 5500],
+                            data: weeklyExpenses,
                             backgroundColor: 'rgba(239, 68, 68, 0.2)',
                             borderColor: 'rgb(239, 68, 68)',
                             tension: 0.4,
@@ -999,22 +1085,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            // Reports Chart
+            // Reports Chart - Usando datos reales del localStorage
             try {
                 const ctx = document.getElementById('gananciasChart').getContext('2d');
-                new Chart(ctx, {
+                const gananciasChart = document.getElementById('gananciasChart');
+
+                // Obtener transacciones del mes actual
+                const transactions = DB.get('transactions');
+                const currentDate = new Date();
+                const currentMonth = currentDate.getMonth();
+                const currentYear = currentDate.getFullYear();
+
+                // Filtrar transacciones del mes actual
+                const monthTransactions = transactions.filter(tx => {
+                    const txDate = new Date(tx.date);
+                    return txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear;
+                });
+
+                // Obtener semanas del mes (dividir en 4 semanas)
+                const weeks = [
+                    monthTransactions.filter(tx => new Date(tx.date).getDate() <= 7),
+                    monthTransactions.filter(tx => new Date(tx.date).getDate() > 7 && new Date(tx.date).getDate() <= 14),
+                    monthTransactions.filter(tx => new Date(tx.date).getDate() > 14 && new Date(tx.date).getDate() <= 21),
+                    monthTransactions.filter(tx => new Date(tx.date).getDate() > 21)
+                ];
+
+                // Calcular ingresos y gastos por semana
+                const weeklyIncomes = weeks.map(week =>
+                    week.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0)
+                );
+
+                const weeklyExpenses = weeks.map(week =>
+                    week.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0)
+                );
+
+                // Almacenar la referencia del gráfico en el elemento canvas
+                gananciasChart.chart = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
                         datasets: [{
                             label: 'Ingresos',
-                            data: [10200, 12500, 11800, 11200],
+                            data: weeklyIncomes,
                             backgroundColor: '#4ade80',
                             borderColor: '#4ade80',
                             borderWidth: 2,
                         }, {
                             label: 'Egresos',
-                            data: [3000, 3500, 2850, 3000],
+                            data: weeklyExpenses,
                             backgroundColor: '#f87171',
                             borderColor: '#f87171',
                             borderWidth: 2,
